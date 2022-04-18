@@ -25,9 +25,10 @@ nav:
 
 #Configuration
 theme: 
-  name: readthedocs
-  palette:
-    scheme: slate
+  name: material
+#  name: readthedocs
+#  palette:
+#    scheme: slate
 
 # Extensions
 markdown_extensions:
