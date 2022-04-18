@@ -1,2 +1,3 @@
 # SCANPLOT
-Mirror do repositório do SCANPLOT
+
+Mirror do repositório do SCANPLOT.
