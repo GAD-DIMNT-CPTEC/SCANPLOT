@@ -18,3 +18,5 @@ As principais funções do módulo são as seguintes:
 3. `plot_lines_tStudent`: esta função plota gráficos de linhas a partir dos dataframes, acompanhadas com o teste de significância t de Student;
 4. `plot_scorecard`: esta função plota um scorecard a partir dos dataframes;
 5. `plot_dTaylor`: esta função plota um diagrama de Taylor a partir dos dataframes.
+
+A documentação do SCANPLOT pode ser encontrada em https://cfbastarz.github.io/SCANPLOT/. Um notebook do Jupyter com a aplicação das funções do SCANPLOT, está disponível em https://github.com/cfbastarz/SCANPLOT/blob/master/SCANPLOT.ipynb
