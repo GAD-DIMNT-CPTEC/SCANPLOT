@@ -14,10 +14,10 @@ dependencies:
   - brotlipy=0.7.0=py38h1e0a361_1000
   - bzip2=1.0.8=h516909a_2
   - c-ares=1.16.1=h516909a_0
-  - ca-certificates=2022.3.29=h06a4308_0
+  - ca-certificates=2021.10.8=ha878542_0
   - cairo=1.16.0=hcf35c78_1003
   - cartopy=0.17.0=py38h9cf8511_1015
-  - certifi=2021.10.8=py38h06a4308_2
+  - certifi=2021.10.8=py38h578d9bd_2
   - cffi=1.14.1=py38h5bae8af_0
   - cfitsio=3.470=hce51eda_6
   - chardet=3.0.4=py38h32f6830_1006
@@ -36,6 +36,7 @@ dependencies:
   - geos=3.8.1=he1b5a44_0
   - geotiff=1.6.0=h05acad5_0
   - gettext=0.19.8.1=hc5be6a0_1002
+  - gh=2.8.0=ha8f183a_0
   - giflib=5.2.1=h516909a_2
   - glib=2.64.3=h6f030ca_0
   - gst-plugins-base=1.14.5=h0935bb2_2
@@ -168,6 +169,7 @@ dependencies:
   - urllib3=1.25.10=py_0
   - wcwidth=0.2.4=pyh9f0ad1d_0
   - webencodings=0.5.1=py_1
+  - wget=1.20.1=h20c2e04_0
   - wheel=0.34.2=py_1
   - widgetsnbextension=3.5.1=py38_0
   - xarray=0.16.0=py_0
