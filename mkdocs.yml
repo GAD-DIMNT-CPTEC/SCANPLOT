@@ -10,8 +10,9 @@ edit_uri: edit/main/docs/
 
 # Page tree
 nav:
-  - 'Apresentação': 
-    - 'Introdução': introducao.md
+  - 'Introdução': 
+    - 'Instalação': instalacao.md
+    - 'Apresentação': apresentacao.md
   - 'Uso':
     - 'Leitura dos namelists do SCANTEC': Tutorial_SCANPLOT-leitura_namelists.ipynb
     - 'Função get_dataframe': Tutorial_SCANPLOT-get_dataframe.ipynb

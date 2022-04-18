@@ -1,4 +1,4 @@
-# Introdução
+# Apresentação
 
 O módulo `scanplot` possui as seguintes funções:
 
