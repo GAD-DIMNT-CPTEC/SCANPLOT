@@ -1,4 +1,4 @@
- módulo `scanplot` possui as seguintes funções:
+ O módulo `scanplot` possui as seguintes funções:
 
 1. `read_namelists`: esta função lê os arquivos de namelist e definições dos modelos do SCANTEC;
 2. `get_dataframe`: esta função transforma uma ou mais tabelas em dataframes do Pandas, acessíveis por meio de um dicionário;

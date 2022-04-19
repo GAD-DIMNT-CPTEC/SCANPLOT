@@ -1,4 +1,4 @@
-# Apresentação
+# Introdução
 
 O módulo `scanplot` possui as seguintes funções:
 
@@ -32,3 +32,5 @@ ou
 ```Python
 print(red_namelists.__doc__)
 ```
+
+Nas próximas páginas, será feita uma breve introdução ao Pandas utilizando algumas tabelas do SCANTEC como exemplo. Esta introdução deverá servir como base para a introdução da lógica utilizada no tratamento das tabelas do SCANTEC.

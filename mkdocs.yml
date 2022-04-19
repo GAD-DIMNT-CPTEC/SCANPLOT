@@ -10,9 +10,9 @@ edit_uri: edit/main/docs/
 
 # Page tree
 nav:
-  - 'Introdução': 
+  - 'Início': 
     - 'Instalação': instalacao.md
-    - 'Apresentação': apresentacao.md
+    - 'Introdução': introducao.md
   - 'Uso':
     - 'Leitura dos namelists do SCANTEC': Tutorial_SCANPLOT-leitura_namelists.ipynb
     - 'Função get_dataframe': Tutorial_SCANPLOT-get_dataframe.ipynb
@@ -21,7 +21,7 @@ nav:
     - 'Introdução': funcoes_plotagem.md
     - 'plot_lines': Tutorial_SCANPLOT-plot_lines.ipynb
     - 'plot_scorecard': Tutorial_SCANPLOT-plot_scorecard.ipynb
-    - 'plot_dTaylor': Tutorial_SCANPLOT-plot_dtaylor.ipynb 
+    - 'plot_dTaylor': Tutorial_SCANPLOT-plot_dtaylor.ipynb
     - 'plot_lines_tStudent': Tutorial_SCANPLOT-plot_lines_tstudent.ipynb
 
 #Configuration
@@ -39,12 +39,21 @@ markdown_extensions:
   - abbr
   - pymdownx.snippets
   - pymdownx.details
-  - pymdownx.superfences
   - pymdownx.critic
   - pymdownx.caret
   - pymdownx.keys
   - pymdownx.mark
   - pymdownx.tilde
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 # Plugins
 plugins:

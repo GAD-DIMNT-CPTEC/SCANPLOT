@@ -42,7 +42,7 @@ Com uma cópia local do código do SCANPLOT, entre do diretório principal da in
 pip install -e .
 ```
 
-!!! warning
+!!! warning "ATENÇÃO"
 
     Este comando deve ser executado dentro do ambiente SCANPLOT criado nas etapas anteriores!
 
