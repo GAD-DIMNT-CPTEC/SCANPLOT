@@ -8,11 +8,15 @@ Da mesma forma como foi feito com a função `read_namelists`, pode-se digitar o
 
     Um dataframe é uma estrutura de dado tabulado.
 
+=== "Comando"
 
-```python
-help(scanplot.get_dataframe)
-```
+    ```python linenums="1"
+    help(scanplot.get_dataframe)
+    ```
 
+=== "Resultado"
+
+    ```python linenums="1"
     Help on function get_dataframe in module data_structures:
     
     get_dataframe(dataInicial, dataFinal, Stats, Exps, outDir, **kwargs)
@@ -55,8 +59,7 @@ help(scanplot.get_dataframe)
             outDir = data_conf["Output directory"]
             
             dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
-    
-
+    ```
 
 A função `get_dataframe` recebe uma série de parâmetros de entrada e retorna um dicionário com uma ou mais tabelas que já estarão na estrutura de dataframe do Pandas. Na célula a seguir, serão definidos os valores de entrada da função `get_dataframe` a partir dos dicionários `data_conf` e `data_vars`, criados anteriormente.
 
@@ -68,34 +71,56 @@ O parâmetro `Vars` também é uma lista, mas é definido de forma diferente. O 
 
     Uma tupla é uma estrutura de dados imutável que pode armazenar vários elementos.
 
+=== "Comando"
 
-```python
-dataInicial = data_conf['Starting Time']
-dataFinal = data_conf['Ending Time']
-Vars = list(map(data_vars.get,[11,12,13])) # ou [*map(data_vars.get,[12,14])]
-Stats = ['ACOR', 'RMSE', 'VIES']
-Exps = list(data_conf['Experiments'].keys()) # ou [*data_conf["Experiments"].keys()]
-outDir = data_conf['Output directory']
-figDir = outDir + '/figs'
-```
+    ```python linenums="1"
+    dataInicial = data_conf['Starting Time']
+    dataFinal = data_conf['Ending Time']
+    Vars = list(map(data_vars.get,[11,12,13]))
+    Stats = ['ACOR', 'RMSE', 'VIES']
+    Exps = list(data_conf['Experiments'].keys())
+    outDir = data_conf['Output directory']
+    figDir = outDir + '/figs'
+    ```
+
+!!! tip "Dica"
+
+    Os comandos:
+
+    ```python 
+    Vars = list(map(data_vars.get,[11,12,13]))
+    Exps = list(data_conf['Experiments'].keys())
+    ```
+
+    pode ser substituído, respectivamente, por:
+
+    ```python
+    Vars = [*map(data_vars.get,[12,14])]
+    Exps = [*data_conf["Experiments"].keys()]
+    ```
 
 Com a definição dos parâmetros de entrada da função `get_dataframe`, a sua utilização é feita da seguinte forma:
 
 
-```python
-dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series=False)
-```
+=== "Comando"
+
+    ```python linenums="1"
+    dTable = scanplot.get_dataframe(dataInicial, dataFinal, Stats, 
+                                    Exps, outDir, series=False)
+    ```
 
 Na chamada da função `get_dataframe`, o objeto `dTable` é um dicionário que deverá conter as tabelas escolhidas pelo usuário a partir do ajuste dos parâmetros de entrada da função. Para inspecionar o conteúdo do dicionário `dTable`, basta digitar no prompt:
 
 
-```python
-dTable
-```
+=== "Comando"
 
+    ```python linenums="1"
+    dTable
+    ```
 
+=== "Resultado"
 
-
+    ```python linenums="1"
     {'ACORX126_20200601002020081500T.scan':     %Previsao  psnm:000  temp:850  temp:500  temp:250  umes:925  umes:850  \
      0           0     0.999     0.997     1.000     0.999     0.250     0.154   
      1          24     0.981     0.986     0.997     0.992     0.228     0.137   
@@ -732,396 +757,33 @@ dTable
      13     0.147    -0.026     0.061     0.184  
      14     0.252    -0.051     0.042     0.191  
      15     0.352    -0.036     0.055     0.208  }
-
-
+    ```
 
 No dicionário `dTable`, observe que foram carregadas as tabelas referente às estatísticas escolhidas (`VIES`, `RMSE` e `ACOR`). Para visualizar o dataframe da tabela, basta passar o nome da tabela como argumento do dicionário dTable, como em `dTable['NOME_TABELA']`. Veja o exemplo a seguir:
 
+=== "Comando"
 
-```python
-dTable['ACORX126_20200601002020081500T.scan']
-```
+    ```python linenums="1"
+    dTable['ACORX126_20200601002020081500T.scan']
+    ```
 
+=== "Resultado"
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>%Previsao</th>
-      <th>psnm:000</th>
-      <th>temp:850</th>
-      <th>temp:500</th>
-      <th>temp:250</th>
-      <th>umes:925</th>
-      <th>umes:850</th>
-      <th>umes:500</th>
-      <th>agpl:925</th>
-      <th>zgeo:850</th>
-      <th>zgeo:500</th>
-      <th>zgeo:250</th>
-      <th>uvel:850</th>
-      <th>uvel:500</th>
-      <th>uvel:250</th>
-      <th>vvel:850</th>
-      <th>vvel:500</th>
-      <th>vvel:250</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0</td>
-      <td>0.999</td>
-      <td>0.997</td>
-      <td>1.000</td>
-      <td>0.999</td>
-      <td>0.250</td>
-      <td>0.154</td>
-      <td>0.071</td>
-      <td>0.997</td>
-      <td>1.000</td>
-      <td>1.000</td>
-      <td>1.000</td>
-      <td>0.991</td>
-      <td>0.997</td>
-      <td>0.998</td>
-      <td>0.984</td>
-      <td>0.995</td>
-      <td>0.997</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>24</td>
-      <td>0.981</td>
-      <td>0.986</td>
-      <td>0.997</td>
-      <td>0.992</td>
-      <td>0.228</td>
-      <td>0.137</td>
-      <td>0.069</td>
-      <td>0.984</td>
-      <td>0.996</td>
-      <td>0.999</td>
-      <td>1.000</td>
-      <td>0.923</td>
-      <td>0.970</td>
-      <td>0.979</td>
-      <td>0.871</td>
-      <td>0.948</td>
-      <td>0.958</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>48</td>
-      <td>0.964</td>
-      <td>0.978</td>
-      <td>0.994</td>
-      <td>0.985</td>
-      <td>0.216</td>
-      <td>0.123</td>
-      <td>0.064</td>
-      <td>0.964</td>
-      <td>0.990</td>
-      <td>0.997</td>
-      <td>0.998</td>
-      <td>0.888</td>
-      <td>0.943</td>
-      <td>0.955</td>
-      <td>0.806</td>
-      <td>0.897</td>
-      <td>0.908</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>72</td>
-      <td>0.937</td>
-      <td>0.968</td>
-      <td>0.989</td>
-      <td>0.977</td>
-      <td>0.203</td>
-      <td>0.108</td>
-      <td>0.059</td>
-      <td>0.941</td>
-      <td>0.979</td>
-      <td>0.994</td>
-      <td>0.996</td>
-      <td>0.840</td>
-      <td>0.906</td>
-      <td>0.922</td>
-      <td>0.726</td>
-      <td>0.826</td>
-      <td>0.837</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>96</td>
-      <td>0.906</td>
-      <td>0.959</td>
-      <td>0.983</td>
-      <td>0.968</td>
-      <td>0.196</td>
-      <td>0.098</td>
-      <td>0.053</td>
-      <td>0.917</td>
-      <td>0.965</td>
-      <td>0.988</td>
-      <td>0.993</td>
-      <td>0.787</td>
-      <td>0.860</td>
-      <td>0.882</td>
-      <td>0.629</td>
-      <td>0.733</td>
-      <td>0.743</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>120</td>
-      <td>0.868</td>
-      <td>0.949</td>
-      <td>0.976</td>
-      <td>0.958</td>
-      <td>0.190</td>
-      <td>0.090</td>
-      <td>0.047</td>
-      <td>0.896</td>
-      <td>0.947</td>
-      <td>0.982</td>
-      <td>0.988</td>
-      <td>0.734</td>
-      <td>0.809</td>
-      <td>0.838</td>
-      <td>0.532</td>
-      <td>0.626</td>
-      <td>0.638</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>144</td>
-      <td>0.829</td>
-      <td>0.942</td>
-      <td>0.970</td>
-      <td>0.950</td>
-      <td>0.187</td>
-      <td>0.085</td>
-      <td>0.042</td>
-      <td>0.878</td>
-      <td>0.928</td>
-      <td>0.974</td>
-      <td>0.984</td>
-      <td>0.683</td>
-      <td>0.758</td>
-      <td>0.795</td>
-      <td>0.444</td>
-      <td>0.520</td>
-      <td>0.534</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>168</td>
-      <td>0.791</td>
-      <td>0.934</td>
-      <td>0.964</td>
-      <td>0.942</td>
-      <td>0.184</td>
-      <td>0.081</td>
-      <td>0.037</td>
-      <td>0.862</td>
-      <td>0.909</td>
-      <td>0.967</td>
-      <td>0.979</td>
-      <td>0.637</td>
-      <td>0.710</td>
-      <td>0.752</td>
-      <td>0.372</td>
-      <td>0.419</td>
-      <td>0.425</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>192</td>
-      <td>0.753</td>
-      <td>0.929</td>
-      <td>0.958</td>
-      <td>0.936</td>
-      <td>0.182</td>
-      <td>0.077</td>
-      <td>0.033</td>
-      <td>0.849</td>
-      <td>0.890</td>
-      <td>0.960</td>
-      <td>0.974</td>
-      <td>0.595</td>
-      <td>0.668</td>
-      <td>0.717</td>
-      <td>0.302</td>
-      <td>0.322</td>
-      <td>0.324</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>216</td>
-      <td>0.718</td>
-      <td>0.924</td>
-      <td>0.953</td>
-      <td>0.930</td>
-      <td>0.182</td>
-      <td>0.076</td>
-      <td>0.029</td>
-      <td>0.838</td>
-      <td>0.871</td>
-      <td>0.953</td>
-      <td>0.970</td>
-      <td>0.560</td>
-      <td>0.630</td>
-      <td>0.684</td>
-      <td>0.243</td>
-      <td>0.235</td>
-      <td>0.234</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>240</td>
-      <td>0.691</td>
-      <td>0.921</td>
-      <td>0.949</td>
-      <td>0.926</td>
-      <td>0.179</td>
-      <td>0.075</td>
-      <td>0.027</td>
-      <td>0.827</td>
-      <td>0.857</td>
-      <td>0.947</td>
-      <td>0.966</td>
-      <td>0.534</td>
-      <td>0.597</td>
-      <td>0.654</td>
-      <td>0.200</td>
-      <td>0.168</td>
-      <td>0.163</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>264</td>
-      <td>0.672</td>
-      <td>0.918</td>
-      <td>0.946</td>
-      <td>0.923</td>
-      <td>0.177</td>
-      <td>0.074</td>
-      <td>0.024</td>
-      <td>0.819</td>
-      <td>0.846</td>
-      <td>0.943</td>
-      <td>0.964</td>
-      <td>0.518</td>
-      <td>0.575</td>
-      <td>0.633</td>
-      <td>0.173</td>
-      <td>0.130</td>
-      <td>0.123</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>288</td>
-      <td>0.660</td>
-      <td>0.916</td>
-      <td>0.944</td>
-      <td>0.919</td>
-      <td>0.176</td>
-      <td>0.072</td>
-      <td>0.022</td>
-      <td>0.812</td>
-      <td>0.840</td>
-      <td>0.940</td>
-      <td>0.962</td>
-      <td>0.502</td>
-      <td>0.554</td>
-      <td>0.613</td>
-      <td>0.158</td>
-      <td>0.104</td>
-      <td>0.100</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>312</td>
-      <td>0.648</td>
-      <td>0.915</td>
-      <td>0.941</td>
-      <td>0.917</td>
-      <td>0.177</td>
-      <td>0.071</td>
-      <td>0.021</td>
-      <td>0.806</td>
-      <td>0.833</td>
-      <td>0.938</td>
-      <td>0.960</td>
-      <td>0.488</td>
-      <td>0.537</td>
-      <td>0.598</td>
-      <td>0.146</td>
-      <td>0.091</td>
-      <td>0.088</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>336</td>
-      <td>0.632</td>
-      <td>0.912</td>
-      <td>0.939</td>
-      <td>0.915</td>
-      <td>0.177</td>
-      <td>0.071</td>
-      <td>0.019</td>
-      <td>0.800</td>
-      <td>0.825</td>
-      <td>0.934</td>
-      <td>0.958</td>
-      <td>0.476</td>
-      <td>0.525</td>
-      <td>0.588</td>
-      <td>0.129</td>
-      <td>0.067</td>
-      <td>0.073</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>360</td>
-      <td>0.624</td>
-      <td>0.911</td>
-      <td>0.937</td>
-      <td>0.914</td>
-      <td>0.177</td>
-      <td>0.071</td>
-      <td>0.019</td>
-      <td>0.794</td>
-      <td>0.820</td>
-      <td>0.932</td>
-      <td>0.956</td>
-      <td>0.469</td>
-      <td>0.514</td>
-      <td>0.578</td>
-      <td>0.118</td>
-      <td>0.054</td>
-      <td>0.060</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
+    |         |%Previsao|psnm:000|temp:850|temp:500|temp:250|umes:925|umes:850|umes:500|agpl:925|zgeo:850|zgeo:500|zgeo:250|uvel:850|uvel:500|uvel:250|vvel:850|vvel:500|vvel:250|
+    |---------|---------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|--------|
+    |0        |0        |0.999   |0.997   |1.000   |0.999   |0.250   |0.154   |0.071   |0.997   |1.000   |1.000   |1.000   |0.991   |0.997   |0.998   |0.984   |0.995   |0.997   | 
+    |1        |24       |0.981   |0.986   |0.997   |0.992   |0.228   |0.137   |0.069   |0.984   |0.996   |0.999   |1.000   |0.923   |0.970   |0.979   |0.871   |0.948   |0.958   |
+    |2        |48       |0.964   |0.978   |0.994   |0.985   |0.216   |0.123   |0.064   |0.964   |0.990   |0.997   |0.998   |0.888   |0.943   |0.955   |0.806   |0.897   |0.908   |
+    |3        |72       |0.937   |0.968   |0.989   |0.977   |0.203   |0.108   |0.059   |0.941   |0.979   |0.994   |0.996   |0.840   |0.906   |0.922   |0.726   |0.826   |0.837   |
+    |4        |96       |0.906   |0.959   |0.983   |0.968   |0.196   |0.098   |0.053   |0.917   |0.965   |0.988   |0.993   |0.787   |0.860   |0.882   |0.629   |0.733   |0.743   |
+    |5        |120      |0.868   |0.949   |0.976   |0.958   |0.190   |0.090   |0.047   |0.896   |0.947   |0.982   |0.988   |0.734   |0.809   |0.838   |0.532   |0.626   |0.638   |
+    |6        |144      |0.829   |0.942   |0.970   |0.950   |0.187   |0.085   |0.042   |0.878   |0.928   |0.974   |0.984   |0.683   |0.758   |0.795   |0.444   |0.520   |0.534   |
+    |7        |168      |0.791   |0.934   |0.964   |0.942   |0.184   |0.081   |0.037   |0.862   |0.909   |0.967   |0.979   |0.637   |0.710   |0.752   |0.372   |0.419   |0.425   |
+    |8        |192      |0.753   |0.929   |0.958   |0.936   |0.182   |0.077   |0.033   |0.849   |0.890   |0.960   |0.974   |0.595   |0.668   |0.717   |0.302   |0.322   |0.324   |
+    |9        |216      |0.718   |0.924   |0.953   |0.930   |0.182   |0.076   |0.029   |0.838   |0.871   |0.953   |0.970   |0.560   |0.630   |0.684   |0.243   |0.235   |0.234   |
+    |10       |240      |0.691   |0.921   |0.949   |0.926   |0.179   |0.075   |0.027   |0.827   |0.857   |0.947   |0.966   |0.534   |0.597   |0.654   |0.200   |0.168   |0.163   |
+    |11       |264      |0.672   |0.918   |0.946   |0.923   |0.177   |0.074   |0.024   |0.819   |0.846   |0.943   |0.964   |0.518   |0.575   |0.633   |0.173   |0.130   |0.123   |
+    |12       |288      |0.660   |0.916   |0.944   |0.919   |0.176   |0.072   |0.022   |0.812   |0.840   |0.940   |0.962   |0.502   |0.554   |0.613   |0.158   |0.104   |0.100   |
+    |13       |312      |0.648   |0.915   |0.941   |0.917   |0.177   |0.071   |0.021   |0.806   |0.833   |0.938   |0.960   |0.488   |0.537   |0.598   |0.146   |0.091   |0.088   |
+    |14       |336      |0.632   |0.912   |0.939   |0.915   |0.177   |0.071   |0.019   |0.800   |0.825   |0.934   |0.958   |0.476   |0.525   |0.588   |0.129   |0.067   |0.073   |
+    |15       |360      |0.624   |0.911   |0.937   |0.914   |0.177   |0.071   |0.019   |0.794   |0.820   |0.932   |0.956   |0.469   |0.514   |0.578   |0.118   |0.054   |0.060   |

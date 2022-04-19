@@ -9,10 +9,15 @@ O diagrama de Taylor, semelhante ao scorecard, também possui a característica 
 Para acessar a documentação da função `plot_dTaylor`, utilize o comando a seguir:
 
 
-``` python 
-help(scanplot.plot_dTaylor)
-```
+=== "Comando"
 
+    ``` python linenums="1"
+    help(scanplot.plot_dTaylor)
+    ```
+
+=== "Resultado"
+
+    ```python linenums="1"
     Help on function plot_dTaylor in module plot_functions:
     
     plot_dTaylor(dTable, data_conf, Vars, Stats, outDir, **kwargs)
@@ -70,35 +75,41 @@ help(scanplot.plot_dTaylor)
         Observações
         -----------
             Experimental, esta função considera o devio-padrão como a raiz quadrada do RMSE.
-    
-
+    ```
 
 A função `plot_dTaylor` permite que sejam selecionadas uma ou mais variáveis, as quais serão plotadas em diagramas separados. O mesmo acontece com os experimentos. Para ilustrar o uso da função `plot_dTaylor`, serão escolhidas duas variáveis dos experimentos avalidados pelo SCANTEC.
 
+=== "Comando"
 
-``` py
-Vars = list(map(data_vars.get,[12,13]))
-```
+    ``` py linenums="1"
+    Vars = list(map(data_vars.get,[12,13]))
+    ```
 
 Observe o parâmetros `data_conf`, que é o dicionário criado e que contém as configurações do SCANTEC, inclusive os  prefixos (eg., `EXP01`, `EXP02` etc) dos experimentos:
 
 
-``` py
-scanplot.plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,figDir=figDir,showFig=True,saveFig=True)
-```
+=== "Comando"
 
-![png](./imgs/dtaylor_output_5_0.png)
-    
-![png](./imgs/dtaylor_output_5_1.png)
-    
-![png](./imgs/dtaylor_output_5_2.png)
+    ``` py linenums="1"
+    scanplot.plot_dTaylor(dTable, data_conf, Vars,
+                          Stats, outDir, figDir=figDir,
+                          showFig=True, saveFig=True)
+    ```
 
-![png](./imgs/dtaylor_output_5_3.png)
+=== "Resultado"
+
+    ![png](./imgs/dtaylor_output_5_0.png)
+        
+    ![png](./imgs/dtaylor_output_5_1.png)
+        
+    ![png](./imgs/dtaylor_output_5_2.png)
     
-![png](./imgs/dtaylor_output_5_4.png)
-    
-![png](./imgs/dtaylor_output_5_5.png)
-    
-![png](./imgs/dtaylor_output_5_6.png)
-    
-![png](./imgs/dtaylor_output_5_7.png)
+    ![png](./imgs/dtaylor_output_5_3.png)
+        
+    ![png](./imgs/dtaylor_output_5_4.png)
+        
+    ![png](./imgs/dtaylor_output_5_5.png)
+        
+    ![png](./imgs/dtaylor_output_5_6.png)
+        
+    ![png](./imgs/dtaylor_output_5_7.png)

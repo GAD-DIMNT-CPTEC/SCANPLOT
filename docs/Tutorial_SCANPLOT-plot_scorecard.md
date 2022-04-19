@@ -27,11 +27,15 @@ onde,
 
 Para aprender a utilizar a função `plot_scorecard`, utilize o comando a seguir:
 
+=== "Comando"
 
-```python
-help(scanplot.plot_scorecard)
-```
+    ```python linenums="1"
+    help(scanplot.plot_scorecard)
+    ```
 
+=== "Resultado"
+
+    ```python linenums="1"
     Help on function plot_scorecard in module plot_functions:
     
     plot_scorecard(dTable, Vars, Stats, Tstat, Exps, outDir, **kwargs)
@@ -98,86 +102,71 @@ help(scanplot.plot_scorecard)
             Nos scorecards, as cores sempre indicam os ganhos do segundo experimento com relação ao primeiro.
             Portanto, os tons mais intensos de verde, indicam que o 'EXP2' apresentam maior ganho em relação 
             ao 'EXP1' ou que a mudança fracional é maior.
-    
-
+    ```    
 
 Como o scorecard tem a premissa de resumir as estatísticas calculadas indicando para quais variáveis e quando um experimento é melhor ou pior do que outro, é interessante considerar todas as variáveis contidas nas tabelas (pode-se escolher qualquer quantidade ou estatística). Neste caso, são considerados apenas os dois experimentos, `EXP1` e `EXP2`. Para isso, incrementamos a lista `Vars` com os índices das variáveis que serão utilizadas. Nas figuras a seguir, observe que as comparações devem sempre ser interpretadas da seguinte forma: a melhora/piora do `EXP2` em relação ao `EXP1`.
 
+=== "Comando"
 
-```python
-Vars = list(map(data_vars.get,[*data_vars.keys()]))
-```
+    ```python linenums="1"
+    Vars = list(map(data_vars.get,[*data_vars.keys()]))
+    ```
 
-
-```python
-scanplot.plot_scorecard(dTable,Vars,Stats,'ganho',Exps,outDir,figDir=figDir,showFig=True,saveFig=True)
-```
+A função `plot_scorecard` é então aplicada da seguinte forma:
 
 
+=== "Comando"
+
+    ```python linenums="1"
+    scanplot.plot_scorecard(dTable, Vars, Stats, 'ganho',
+                            Exps, outDir, figDir=figDir,
+                            showFig=True, saveFig=True)
+    ```
+
+=== "Resultado"
     
-![png](./imgs/scorecard_output_4_0.png)
+    ![png](./imgs/scorecard_output_4_0.png)
+        
+    ![png](./imgs/scorecard_output_4_1.png)
+        
+    ![png](./imgs/scorecard_output_4_2.png)
     
-
-
-
-    
-![png](./imgs/scorecard_output_4_1.png)
-    
-
-
-
-    
-![png](./imgs/scorecard_output_4_2.png)
-    
-
 
 Para avaliar o ganho entre os demais experimentos, basta redefinir a lista `Exps` indicando o par de experimentos que se deseja avaliar. Por exemplo:
 
+=== "Comando"
 
-```python
-Exps = ['T126', 'TENM']
-scanplot.plot_scorecard(dTable,Vars,Stats,'ganho',Exps,outDir,figDir=figDir,showFig=True,saveFig=True)
-```
+    ```python linenums="1"
+    Exps = ['T126', 'TENM']
 
+    scanplot.plot_scorecard(dTable, Vars, Stats, 'ganho',
+                            Exps, outDir, figDir=figDir, 
+                            showFig=True, saveFig=True)
+    ```
 
+=== "Resultado"
     
-![png](./imgs/scorecard_output_6_0.png)
+    ![png](./imgs/scorecard_output_6_0.png)
+        
+    ![png](./imgs/scorecard_output_6_1.png)
     
-
-
-
-    
-![png](./imgs/scorecard_output_6_1.png)
-    
-
-
-
-    
-![png](./imgs/scorecard_output_6_2.png)
-    
-
+    ![png](./imgs/scorecard_output_6_2.png)
+        
 
 Como indicado pela documentação, a função `plot_scorecard` está preparada para plotar os scorecards a partir do ganho percentual (indicado pelo parâmetro `ganho` passado para dentro da função) e a partir do mudança fracional (indicado pelo parâmetro `fc` passado para dentro da função). Veja no exemplo a seguir os scorecards da mudança fracional obtidos a partir das tabelas do SCANTEC, indicadas pelo parâmetro `Stats`:
 
+=== "Comando"
 
-```python
-scanplot.plot_scorecard(dTable,Vars,Stats,'fc',Exps,outDir,figDir=figDir,showFig=True,saveFig=True)
-```
+    ```python linenums="1"
+    scanplot.plot_scorecard(dTable, Vars, Stats, 'fc',
+                            Exps, outDir, figDir=figDir, 
+                            showFig=True, saveFig=True)
+    ```
 
-
+=== "Resultado"
     
-![png](./imgs/scorecard_output_8_0.png)
-    
-
-
-
-    
-![png](./imgs/scorecard_output_8_1.png)
-    
-
-
-
-    
-![png](./imgs/scorecard_output_8_2.png)
-    
-
+    ![png](./imgs/scorecard_output_8_0.png)
+        
+    ![png](./imgs/scorecard_output_8_1.png)
+        
+    ![png](./imgs/scorecard_output_8_2.png)

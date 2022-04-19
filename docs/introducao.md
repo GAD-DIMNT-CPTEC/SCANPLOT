@@ -11,26 +11,34 @@ O módulo `scanplot` possui as seguintes funções:
 
 As funções possuem formas específicas de utilização. Para saber como utilizá-las, carregue primeiro o módulo `scanplot`:
 
-```Python
-import scanplot
-```
+=== "Comando"
+
+    ```Python linenums="1"
+    import scanplot
+    ```
 
 ou 
 
-```Python
-import scanplot as sc
-```
+=== "Comando"
+
+    ```Python linenums="1"
+    import scanplot as sc
+    ```
 
 E em seguida, acesse a documentação da função digitando uma das duas formas a seguir:
 
-```Python
-help(read_namelists)
-```
+=== "Comando"
+
+    ```Python linenums="1"
+    help(read_namelists)
+    ```
 
 ou
 
-```Python
-print(red_namelists.__doc__)
-```
+=== "Comando"
+
+    ```Python linenums="1"
+    print(red_namelists.__doc__)
+    ```
 
 Nas próximas páginas, será feita uma breve introdução ao Pandas utilizando algumas tabelas do SCANTEC como exemplo. Esta introdução deverá servir como base para a introdução da lógica utilizada no tratamento das tabelas do SCANTEC.

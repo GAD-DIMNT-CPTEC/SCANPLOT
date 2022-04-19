@@ -8,15 +8,23 @@ O Python permite a criação de ambientes que podem ser utilizados para o desenv
 
 Para criar um ambiente apropriado para o uso do SCANPLOT, utilize o comando a seguir:
 
-```
-conda env create -f SCANPLOT.yml
-```
+=== "Comando"
+
+    ```bash linenums="1"
+    conda env create -f SCANPLOT.yml
+    ```
+
+!!! warning "ATENÇÃO"
+
+    A instalação de todos os pacotes do ambiente requer aproximadamente 2,8 GB de espaço em disco.
 
 Após a instalação dos pacotes, basta ativar o ambiente recém criado com o comando:
 
-```
-conda activate SCANPLOT
-```
+=== "Comando"
+
+    ```bash linenums="1"
+    conda activate SCANPLOT
+    ```
 
 Nesta etapa, todos os pacotes necessário para uso e desenvolvimento do SCANPLOT já estão disponíveis.
 
@@ -24,23 +32,29 @@ Nesta etapa, todos os pacotes necessário para uso e desenvolvimento do SCANPLOT
 
 Para obter uma cópia do SCANPLOT para uso e desenvolvimento em máquina local, utilize o comando a seguir[^1]:
 
-```
-gh repo clone cfbastarz/SCANPLOT
-```
+=== "Comando"
+
+    ```bash linenums="1"
+    gh repo clone cfbastarz/SCANPLOT
+    ```
 
 Alternativamente, uma cópia do SCANPLOT pode ser obtida com o seguinte comando[^2]:
 
-```
-wget -c https://github.com/cfbastarz/SCANPLOT/archive/refs/heads/master.zip
-```
+=== "Comando"
+
+    ```bash linenums="1"
+    wget -c https://github.com/cfbastarz/SCANPLOT/archive/refs/heads/master.zip
+    ```
 
 ## Instalação do SCANPLOT
 
 Com uma cópia local do código do SCANPLOT, entre do diretório principal da instalação e execute o comando a seguir:
 
-```
-pip install -e .
-```
+=== "Comando"
+
+    ```bash linenums="1"
+    pip install -e .
+    ```
 
 !!! warning "ATENÇÃO"
 
@@ -48,9 +62,11 @@ pip install -e .
 
 Caso o comando de instalação do SCANPLOT falhe, pode-se prosseguir exportando a variável de ambiente `PYTHONPATH` com o caminho onde se encontra o código do SCANPLOT:
 
-```
-export PYTHONPATH=/caminho/instalacao/SCANPLOT:$PYTHONPATH
-```
+=== "Comando"
+
+    ```bash linenums="1"
+    export PYTHONPATH=/caminho/instalacao/SCANPLOT:$PYTHONPATH
+    ```
 
 [^1]: Necessário uma conta no GitHub e a instalação do utilitário de linha de comando `gh` (veja mais em [https://anaconda.org/conda-forge/gh](https://anaconda.org/conda-forge/gh))
 [^2]: Desta forma, não será possível realizar entregas ao repositório.

@@ -14,19 +14,27 @@ nav:
     - 'Instalação': instalacao.md
     - 'Introdução': introducao.md
   - 'Uso':
-    - 'Leitura dos namelists do SCANTEC': Tutorial_SCANPLOT-leitura_namelists.ipynb
-    - 'Função get_dataframe': Tutorial_SCANPLOT-get_dataframe.ipynb
-    - 'Explorando os dataframes': Tutorial_SCANPLOT-explorando_dataframes.ipynb
+    - 'Leitura dos namelists do SCANTEC': Tutorial_SCANPLOT-leitura_namelists.md
+    - 'Função get_dataframe': Tutorial_SCANPLOT-get_dataframe.md
+    - 'Explorando os dataframes': Tutorial_SCANPLOT-explorando_dataframes.md
   - 'Funções de plotagem do SCANPLOT':
     - 'Introdução': funcoes_plotagem.md
-    - 'plot_lines': Tutorial_SCANPLOT-plot_lines.ipynb
-    - 'plot_scorecard': Tutorial_SCANPLOT-plot_scorecard.ipynb
-    - 'plot_dTaylor': Tutorial_SCANPLOT-plot_dtaylor.ipynb
-    - 'plot_lines_tStudent': Tutorial_SCANPLOT-plot_lines_tstudent.ipynb
+    - 'plot_lines': Tutorial_SCANPLOT-plot_lines.md
+    - 'plot_scorecard': Tutorial_SCANPLOT-plot_scorecard.md
+    - 'plot_dTaylor :fontawesome-regular-face-laugh-wink:': Tutorial_SCANPLOT-plot_dtaylor.md
+    - 'plot_lines_tStudent': Tutorial_SCANPLOT-plot_lines_tstudent.md
 
 #Configuration
 theme: 
   name: material
+  features:
+    - content.tabs.link
+#    - navigation.instant
+#    - navigation.tracking
+#    - navigation.tabs
+    - navigation.tabs.sticky
+#    - navigation.sections
+#    - navigation.top
 #  name: readthedocs
 #  palette:
 #    scheme: slate
@@ -44,11 +52,16 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.mark
   - pymdownx.tilde
-  - attr_list
   - md_in_html
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.arithmatex:
       generic: true
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 
 extra_javascript:
   - javascripts/mathjax.js
@@ -57,7 +70,8 @@ extra_javascript:
 
 # Plugins
 plugins:
-  - mkdocs-video
+#  - mkdocs-video
   - search
-  - mkdocs-jupyter:
-      theme: dark
+#  - mkdocs-jupyter
+#  - mkdocs-jupyter:
+#      theme: dark

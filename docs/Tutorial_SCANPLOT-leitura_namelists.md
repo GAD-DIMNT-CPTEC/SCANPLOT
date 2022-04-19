@@ -5,17 +5,23 @@ O SCANTEC é um software de linha de comando escrito em linguagem Fortran prepar
 Para isso, basta utilizar a função `read_namelists` a partir do módulo principal `scanplot`. Esta e as demais funções, podem ser acessadas a partir do módulo principal, o qual deverá ser carregado:
 
 
-```python
-import scanplot
-```
+=== "Comando"
+
+    ```python linenums="1"
+    import scanplot
+    ```
 
 Para conhecer como deve ser utilizada a função `read_namelists`, o usuário pode utilizar um dos comandos a seguir:
 
+=== "Comando"
 
-```python
-help(scanplot.read_namelists)
-```
+    ```python linenums="1"
+    help(scanplot.read_namelists)
+    ```
 
+=== "Resultado"
+
+    ```python linenums="1"
     Help on function read_namelists in module core_scanplot:
     
     read_namelists(basepath)
@@ -39,7 +45,7 @@ help(scanplot.read_namelists)
             import scanplot
             
             data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
-    
+    ```
 
 
 A função `read_namelists` recebe um caminho (raiz da instalação do SCANTEC, no exemplo `/scripts/ensemble/SCANTEC.TESTS`) como parâmetro de entrada e retorna para o usuário dois dicionários, os quais contém as informações dos arquivos `scantec.conf` e `scantec.vars` do SCANTEC. Estes arquivos possuem as definições dos modelos (intervalo de tempo da avalação, nome do modelo, resolução, caminhos etc). Os nomes `data_vars` e `data_conf` são os nomes dos objetos que serão criados e que conterão os dicionários com as definições dos arquivos `scantec.vars` e `scantec.conf`, respectivamente. A escolha destes nomes fica a critério do usuário.
@@ -49,20 +55,23 @@ A função `read_namelists` recebe um caminho (raiz da instalação do SCANTEC, 
     Um dicionário é uma estrutura de dados associativa.
 
 
-```python
-data_vars, data_conf = scanplot.read_namelists('/scripts/ensemble/SCANTEC.TESTS')
-```
+=== "Comando"
+
+    ```python linenums="1"
+    data_vars, data_conf = scanplot.read_namelists('/scripts/ensemble/SCANTEC.TESTS')
+    ```
 
 Para inspecionar o conteúdo e a estrutura dos dados contidos nos objetos `data_conf` e `data_vars`, basta digitar os nomes no prompt:
 
+=== "Comando"
 
-```python
-data_conf
-```
+    ```python linenums="1"
+    data_conf
+    ```
 
+=== "Resultado"
 
-
-
+    ```python linenums="1"
     {'Starting Time': datetime.datetime(2020, 6, 1, 0, 0),
      'Ending Time': datetime.datetime(2020, 8, 15, 0, 0),
      'Analisys Time Step': '24',
@@ -91,17 +100,19 @@ data_conf
      'Climatology Model Name': 'AGCM_TQ0062L028_50YR_CLIMATOLOGY_18levs',
      'Climatology file': '/lustre_xc50/carlos_bastarz/climatologia/climatologia50yr.%mc.ctl',
      'Output directory': '/scripts/ensemble/SCANTEC.TESTS/dataout'}
+    ```
 
+Da mesma forma com `data_vars`:
 
+=== "Comando"
 
+    ```python linenums="1"
+    data_vars
+    ```
 
-```python
-data_vars
-```
+=== "Resultado"
 
-
-
-
+    ```python linenums="1"
     {0: ('PSNM:000', 'Pressão Reduzida ao Nível Médio do Mar [hPa]'),
      1: ('TEMP:850', 'Temperatura Absoluta @ 850 hPa [K]'),
      2: ('TEMP:500', 'Temperatura Absoluta @ 500 hPa [K]'),
@@ -119,5 +130,4 @@ data_vars
      14: ('VVEL:850', 'Vento Meridional @ 850 hPa [m/s]'),
      15: ('VVEL:500', 'Vento Meridional @ 500 hPa [m/s]'),
      16: ('VVEL:250', 'Vento Meridional @ 250 hPa [m/s]')}
-
-
+    ```
