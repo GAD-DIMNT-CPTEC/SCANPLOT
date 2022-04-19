@@ -46,5 +46,11 @@ pip install -e .
 
     Este comando deve ser executado dentro do ambiente SCANPLOT criado nas etapas anteriores!
 
+Caso o comando de instalação do SCANPLOT falhe, pode-se prosseguir exportando a variável de ambiente `PYTHONPATH` com o caminho onde se encontra o código do SCANPLOT:
+
+```
+export PYTHONPATH=/caminho/instalacao/SCANPLOT:$PYTHONPATH
+```
+
 [^1]: Necessário uma conta no GitHub e a instalação do utilitário de linha de comando `gh` (veja mais em [https://anaconda.org/conda-forge/gh](https://anaconda.org/conda-forge/gh))
 [^2]: Desta forma, não será possível realizar entregas ao repositório.
