@@ -1,10 +1,10 @@
 # Função get_dataframe
 
-Com as informações dos arquivos de namelist do SCANTEC carregados, o próximo passo é ler as tabelas geradas na avaliação com o SCANTEC e transformá-las em dataframes do Pandas. Para isso, o usuário deverá utilizar a função `get_dataframe` do módulo `scanplot`.
+Com as informações dos arquivos de namelist do SCANTEC carregados, o próximo passo é ler as tabelas geradas na avaliação com o SCANTEC e transformá-las em dataframes do Pandas. Para isso, o usuário deverá utilizar a função `get_dataframe` do módulo `scanplot`. Esta função está implementada no script [`data_structures.py`](https://github.com/cfbastarz/SCANPLOT/blob/master/data_structures.py) do SCANPLOT.
 
 Da mesma forma como foi feito com a função `read_namelists`, pode-se digitar o comando `print(funcao.__doc__)` ou simplesmente, `help(funcao)` para descobrir como a função deve ser utilizada:
 
-!!! note "Nota"
+!!! info "Informação"
 
     Um dataframe é uma estrutura de dado tabulado.
 
@@ -67,7 +67,7 @@ Observe que os parâmetros `Vars` e `Stats` são atribuídos de formas diferente
 
 O parâmetro `Vars` também é uma lista, mas é definido de forma diferente. O usuário deve observar que no dicionário `data_vars`, para cada índice está associada uma tupla do tipo `('VAR:LEV', 'Nome da Variável @ Nível hPa [unidade]')`.  Isto foi feito para facilitar ao usuário a escolha da variável, pois ao invés de se digitar o nome da variável, basta escolher pelo menos um dos índices do dicionário `data_vars` que deseja, da seguinte forma `Vars = list(map(data_vars.get,[1,2,3,...]`. 
 
-!!! note "Nota"
+!!! info "Informação"
 
     Uma tupla é uma estrutura de dados imutável que pode armazenar vários elementos.
 
@@ -92,7 +92,7 @@ O parâmetro `Vars` também é uma lista, mas é definido de forma diferente. O 
     Exps = list(data_conf['Experiments'].keys())
     ```
 
-    pode ser substituído, respectivamente, por:
+    podem ser substituídos, respectivamente, por:
 
     ```python
     Vars = [*map(data_vars.get,[12,14])]

@@ -21,7 +21,7 @@ nav:
     - 'Introdução': funcoes_plotagem.md
     - 'plot_lines': Tutorial_SCANPLOT-plot_lines.md
     - 'plot_scorecard': Tutorial_SCANPLOT-plot_scorecard.md
-    - 'plot_dTaylor :fontawesome-regular-face-laugh-wink:': Tutorial_SCANPLOT-plot_dtaylor.md
+    - 'plot_dTaylor': Tutorial_SCANPLOT-plot_dtaylor.md
     - 'plot_lines_tStudent': Tutorial_SCANPLOT-plot_lines_tstudent.md
 
 #Configuration
@@ -59,9 +59,9 @@ markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
   - attr_list
-  - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+#  - pymdownx.emoji:
+#      emoji_index: !!python/name:materialx.emoji.twemoji
+#      emoji_generator: !!python/name:materialx.emoji.to_svg
 
 extra_javascript:
   - javascripts/mathjax.js
@@ -72,6 +72,7 @@ extra_javascript:
 plugins:
 #  - mkdocs-video
   - search
+#  - with-pdf
 #  - mkdocs-jupyter
 #  - mkdocs-jupyter:
 #      theme: dark
