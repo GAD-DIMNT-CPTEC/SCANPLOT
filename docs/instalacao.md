@@ -14,7 +14,7 @@ Para criar um ambiente apropriado para o uso do SCANPLOT, utilize o comando a se
     conda env create -f SCANPLOT.yml
     ```
 
-!!! warning "ATENÇÃO"
+!!! warning "Atenção"
 
     A instalação de todos os pacotes do ambiente requer aproximadamente 2,8 GB de espaço em disco.
 
@@ -56,7 +56,7 @@ Com uma cópia local do código do SCANPLOT, entre do diretório principal da in
     pip install -e .
     ```
 
-!!! warning "ATENÇÃO"
+!!! warning "Atenção"
 
     Este comando deve ser executado dentro do ambiente SCANPLOT criado nas etapas anteriores!
 

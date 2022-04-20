@@ -2,9 +2,9 @@
 
 O diagrama de Taylor, semelhante ao scorecard, também possui a característica de resumir estatísticas básicas em um único diagrama. A função `plot_dTaylor` utiliza o módulo `SkillMetrics` (veja mais detalhes sobre este módulo em [SkillMetrics](https://pypi.org/project/SkillMetrics/)) para plotar o diagrama de Taylor a partir das tabelas do SCANTEC.
 
-!!! bug "CUIDADO"
+!!! bug "Cuidado"
 
-    Esta função está implementada mas ainda não foi testada e pode conter bugs.
+    Esta função está implementada mas ainda não foi testada e pode conter bugs. 
 
 Para acessar a documentação da função `plot_dTaylor`, utilize o comando a seguir:
 

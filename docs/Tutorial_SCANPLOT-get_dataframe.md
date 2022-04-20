@@ -6,7 +6,7 @@ Da mesma forma como foi feito com a função `read_namelists`, pode-se digitar o
 
 !!! info "Informação"
 
-    Um dataframe é uma estrutura de dado tabulado.
+    Um dataframe é uma estrutura de dados tabulados.
 
 === "Comando"
 
