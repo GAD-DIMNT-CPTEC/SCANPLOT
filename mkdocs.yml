@@ -70,7 +70,7 @@ extra_javascript:
 
 # Plugins
 plugins:
-#  - mkdocs-video
+  - mkdocs-video
   - search
 #  - with-pdf
 #  - mkdocs-jupyter
