@@ -27,6 +27,7 @@ nav:
 #Configuration
 theme: 
   name: material
+  language: pt-BR
   features:
     - content.tabs.link
 #    - navigation.instant
@@ -38,6 +39,15 @@ theme:
 #  name: readthedocs
 #  palette:
 #    scheme: slate
+
+extra:
+    social:
+      - icon: fontawesome/brands/youtube
+        link: https://www.youtube.com/channel/UCYtOSAm2NlYArmPwUkg1kUw
+      - icon: fontawesome/brands/github
+        link: https://github.com/cfbastarz
+      - icon: fontawesome/solid/paper-plane
+        link: mailto:cfbastarz@gmail.com
 
 # Extensions
 markdown_extensions:
