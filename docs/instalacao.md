@@ -11,7 +11,7 @@ Para criar um ambiente apropriado para o uso do SCANPLOT, utilize o comando a se
 === "Comando"
 
     ```bash linenums="1"
-    conda env create -f SCANPLOT.yml
+    conda env create -f environment.yml
     ```
 
 !!! warning "Atenção"
