@@ -26,6 +26,10 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
+import cartopy.crs as ccrs
+from cartopy.feature import NaturalEarthFeature, LAND, COASTLINE
+from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+
 from IPython import get_ipython
 
 import seaborn as sns
@@ -35,6 +39,16 @@ import skill_metrics as sm
 from scipy.stats import t
 from scipy.stats import ttest_ind
 
+from aux_functions import isnotebook
+
+import hvplot.xarray
+import holoviews as hv
+from holoviews import opts
+import panel as pn
+
+# Esta instrução é utilizada em conjunto com a opção showFig
+# para determinar se o script está sendo chamado a partir de uma seção
+# iterativa ou pelo shell padrão do Python
 ipython = get_ipython()
 
 def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
@@ -136,33 +150,23 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
     else:
         lineStyles = gvars.lineStyles
 
-    # Define o backend de plotagem do matplotlib
-    # Agg: não mostra os gráficos
-    # inline: mostra os gráficos
-    # Refs:
-    # * https://stackoverflow.com/questions/43545050/using-matplotlib-notebook-after-matplotlib-inline-in-jupyter-notebook-doesnt
-    # * https://www.codegrepper.com/code-examples/python/use+ipython+magic+in+script
-    ipython.magic("matplotlib Agg")           
-    ipython.magic("matplotlib Agg")           
-    import matplotlib.pyplot as plt
-
     # Reseta os parâmetros de aspecto do Seaborn
     sns.reset_orig()
 
     # Opção combine=True    
     if combine:
-     
-        if showFig:
-            ipython.magic("matplotlib inline")           
-            ipython.magic("matplotlib inline")           
-            import matplotlib.pyplot as plt
-        else:
-            ipython.magic("matplotlib Agg")           
-            ipython.magic("matplotlib Agg")           
-            import matplotlib.pyplot as plt
-
-        fig, ax = plt.subplots()
-        plt.rcParams.update({'figure.max_open_warning': 0})
+    
+        if isnotebook(get_ipython().__class__.__name__): # seções iterativas
+            if showFig:
+                ipython.magic('matplotlib inline')           
+                #mpl.rc('figure', max_open_warning = 0)
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+            else:
+                ipython.magic('matplotlib agg')           
+        else: # seções não iterativas
+            if not showFig:
+                mpl.use('agg')
+                mpl.rcParams.update({'figure.max_open_warning': 0})
 
         for var in range(len(Vars)):
        
@@ -223,33 +227,34 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                
                 # Se saveFig=True
                 if saveFig: 
-                    #fig_name = table.replace(str(tExt),'') + Vars[var][0] + '-combined.png'
                     if tExt == 'scan':
                         fig_name = table.replace(table[4:table.find('_')],'EXPS').replace('T.'+str(tExt),'') + Vars[var][0].replace(':','') + '-combined.png'
                     else:
                         fig_name = table.replace(table[4:table.find('_')],'EXPS').replace('T.'+str(tExt),'') + Vars[var][0].replace('-','') + '-combined.png'
                     plt.savefig(os.path.join(figDir, fig_name), bbox_inches='tight', dpi=120)
 
-        plt.close(fig)
+        if showFig:
+            plt.show()
+
+        plt.close()
 
     # Opção combine=False (padrão)
     else:
             
-        if showFig:
-            ipython.magic("matplotlib inline")           
-            ipython.magic("matplotlib inline")           
-            import matplotlib.pyplot as plt
+        if isnotebook(get_ipython().__class__.__name__):
+            if showFig:
+                ipython.magic('matplotlib inline')           
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+            else:
+                ipython.magic('matplotlib agg')           
         else:
-            ipython.magic("matplotlib Agg")           
-            ipython.magic("matplotlib Agg")           
-            import matplotlib.pyplot as plt
+            if not showFig:
+                mpl.use('agg')
+                mpl.rcParams.update({'figure.max_open_warning': 0})
 
         for table in list(dTable.keys()):
             Stat = table[0:4]
             fcts = dTable[table].loc[:,"%Previsao"].values
-
-            fig, ax = plt.subplots()
-            plt.rcParams.update({'figure.max_open_warning': 0})
 
             for var in range(len(Vars)):
                 vname = Vars[var]
@@ -286,14 +291,16 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
                 plt.grid(color='grey', linestyle='--', linewidth=0.5)
  
                 if saveFig:            
-                    #fig_name = table.replace(str(tExt),'') + Vars[var][0] + '.png'
                     if tExt == 'scan':
                         fig_name = table.replace('T.'+str(tExt),'') + '_' + Vars[var][0].replace(':','') + '.png'
                     else:
                         fig_name = table.replace('T.'+str(tExt),'') + '_' + Vars[var][0].replace('-','') + '.png'
                     plt.savefig(os.path.join(figDir, fig_name), bbox_inches='tight', dpi=120)
                 
-            plt.close(fig)
+            if showFig:
+                plt.show()
+
+            plt.close()
         
     return
 
@@ -409,19 +416,17 @@ def plot_lines_tStudent(dataInicial,dataFinal,dTable_series,Exps,Var,VarName,ldr
         lineStyles = gvars.lineStyles
         colors = ['black', 'red', 'green', 'blue', 'orange', 'brown', 'cyan', 'magenta']
 
-    ipython.magic("matplotlib Agg")           
-    ipython.magic("matplotlib Agg")           
-    import matplotlib.pyplot as plt
-
-    if showFig:
-        ipython.magic("matplotlib inline")           
-        ipython.magic("matplotlib inline")           
-        import matplotlib.pyplot as plt
+    if isnotebook(get_ipython().__class__.__name__):
+        if showFig:
+            ipython.magic('matplotlib inline')           
+            mpl.rcParams.update({'figure.max_open_warning': 0})
+        else:
+            ipython.magic('matplotlib agg')           
     else:
-        ipython.magic("matplotlib Agg")           
-        ipython.magic("matplotlib Agg")           
-        import matplotlib.pyplot as plt
-        
+        if not showFig:
+            mpl.use('agg')
+            mpl.rcParams.update({'figure.max_open_warning': 0})
+
     # Ignore Seaborn and respect rcParams
     sns.reset_orig()    
    
@@ -480,12 +485,16 @@ def plot_lines_tStudent(dataInicial,dataFinal,dTable_series,Exps,Var,VarName,ldr
     axs[1].set_xticklabels(fcts)
 
     if saveFig:            
-        #fig_name = 'ACOREXPS' + str(datai) + str(dataf) + '_' + Var.replace(':','').upper() + '-' + 'tStudent.png'
         if tExt == 'scan':
             fig_name = 'ACOREXPS_' + str(datai) + str(dataf) + '_' + Var.replace(':','').upper() + '-' + 'tStudent.png'
         else:
             fig_name = 'ACOREXPS_' + str(datai) + str(dataf) + '_' + Var.replace('-','').upper() + '-' + 'tStudent.png'
         plt.savefig(os.path.join(figDir, fig_name), bbox_inches='tight', dpi=120)
+
+    if showFig:
+        plt.show()
+    else:
+        plt.close()
 
     return
 
@@ -557,6 +566,9 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         ao 'EXP1' ou que a mudança fracional é maior.
     """
 
+    if not len(Exps) == 2:
+        raise Exception('Para utilizar a função plot_scorecard, são necessários 2 experimentos.')
+
     # Verifica se foram passados os argumentos opcionais e atribui os valores
 
     global tExt
@@ -583,18 +595,16 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
     else:
         saveFig = gvars.saveFig
 
-    ipython.magic("matplotlib Agg")           
-    ipython.magic("matplotlib Agg")           
-    import matplotlib.pyplot as plt
-
-    if showFig:
-        ipython.magic("matplotlib inline")           
-        ipython.magic("matplotlib inline")           
-        import matplotlib.pyplot as plt
+    if isnotebook(get_ipython().__class__.__name__):
+        if showFig:
+            ipython.magic('matplotlib inline')           
+            mpl.rcParams.update({'figure.max_open_warning': 0})
+        else:
+            ipython.magic('matplotlib agg')           
     else:
-        ipython.magic("matplotlib Agg")           
-        ipython.magic("matplotlib Agg")           
-        import matplotlib.pyplot as plt
+        if not showFig:
+            mpl.use('agg')
+            mpl.rcParams.update({'figure.max_open_warning': 0})
 
     if tExt == 'scan': 
         list_var = [ltuple[0].lower() for ltuple in Vars]
@@ -678,7 +688,9 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
             fig.savefig(os.path.join(figDir, fig_name), bbox_inches="tight", dpi=120)
         
         plt.close()
-        plt.show()
+    
+        if showFig:
+            plt.show()
         
     return
 
@@ -743,6 +755,13 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
     
     # Verifica se foram passados os argumentos opcionais e atribui os valores
 
+    if 'tExt' in kwargs:
+        tExt = kwargs['tExt']      
+        # Atualiza o valor global de tExt
+        gvars.tExt = tExt
+    else:
+        tExt = gvars.tExt
+
     if 'figDir' in kwargs:
         figDir = kwargs['figDir']
     else:
@@ -758,18 +777,16 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
     else:
         saveFig = gvars.saveFig
 
-    ipython.magic("matplotlib Agg")           
-    ipython.magic("matplotlib Agg")           
-    import matplotlib.pyplot as plt
-
-    if showFig:
-        ipython.magic("matplotlib inline")           
-        ipython.magic("matplotlib inline")           
-        import matplotlib.pyplot as plt
+    if isnotebook(get_ipython().__class__.__name__):
+        if showFig:
+            ipython.magic('matplotlib inline')           
+            mpl.rcParams.update({'figure.max_open_warning': 0})
+        else:
+            ipython.magic('matplotlib agg')           
     else:
-        ipython.magic("matplotlib Agg")           
-        ipython.magic("matplotlib Agg")           
-        import matplotlib.pyplot as plt
+        if not showFig:
+            mpl.use('agg')
+            mpl.rcParams.update({'figure.max_open_warning': 0})
 
     dataInicial = data_conf["Starting Time"]
     dataFinal = data_conf["Ending Time"]
@@ -815,7 +832,9 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
     
             label = [*dTable[tVies].loc[:,"%Previsao"].values]
         
-            #plt.figure()
+            if not showFig:
+                plt.figure()    
+
             plt.tight_layout()
     
             sm.taylor_diagram(sdev, crmsd, ccoef, markerLabel = label, 
@@ -830,15 +849,256 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
             plt.title("Diagrama de Taylor " + str(Exps[exp]) + '\n' + str(Vars[var][1]), fontsize=14)
 
             if saveFig:
-                #fig_name = 'dtaylor-' + str(Exps[exp]) + '-' + Vars[var][0] + '.png'
                 if tExt == 'scan':
                     fig_name = 'DTAYLOR_' + str(Exps[exp]) + '_' + str(datai) + str(dataf) + '_' + Vars[var][0].replace(':', '') + '.png'
                 else:
                     fig_name = 'DTAYLOR_' + str(Exps[exp]) + '_' + str(datai) + str(dataf) + '_' + Vars[var][0].replace('-','') + '.png'
                 plt.savefig(os.path.join(figDir, fig_name), bbox_inches="tight", dpi=120)
 
-            plt.show()
-            
+            if showFig:
+                plt.show()
+            else:
+                plt.close(fig)     
+
     plt.close(fig)     
 
     return
+
+def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
+
+    """
+    plot_fields
+    ===========
+    
+    Esta função plota gráficos espaciais a partir de um dicionário de dataarrays com os arquivos binários do SCANTEC.
+    
+    Parâmetros de entrada
+    ---------------------
+        dSet   : objeto dicionário com uma ou mais arquivos binários do SCANTEC;
+        Vars   : lista com os nomes e níveis das variáveis;
+        Stats  : lista com os nomes das estatísticas a serem processadas;
+        outDir : string com o diretório com os arquivos binários do SCANTEC.
+
+    Parâmetros de entrada opcionais
+    -------------------------------
+        showFig    : valor Booleano para mostrar ou não as figuras durante a plotagem
+                     showFig=False (valor padrão), não mostra as figuras (mais rápido)
+                     showFig=True, mostra as figuras (mais lento);
+        saveFig    : valor Booleano para salvar ou não as figuras durante a plotagem:
+                     * saveFig=False (valor padrão), não salva as figuras;
+                     * saveFig=True, salva as figuras;
+        lineStyles : lista com as cores e os estilos das linhas (o número de elementos
+                     da lista deve ser igual ao número de experimentos);
+        figDir     : string com o diretório onde as figuras serão salvas;
+        combine    : valor Booleano para combinar os campos das estatísticas dos experimentos em um só gráfico:
+                     * combine=False (valor padrão), plota os campos em gráficos separados;
+                     * combine=True, plota os campos das mesmas estatísticas no mesmo gráfico (painel);
+        tExt       : string com o extensão dos nomes das tabelas do SCANTEC:
+                     * tExt='scan' (valor padrão), considera os arquivos binários do SCANTEC;
+                     * tExt='scam', considera os nomes dos arquivos binários das versões antigas do SCANTEC.
+        hvplot     : valor Booleano para apresentar utilizar o hvplot (holoviews) e controlar o loop temporal das figuras por meio de widgets
+                     * hvplot=False (valor padrão), apresenta os campos como um painel
+                     * hvplot=True, apresenta os campos como um loop controlado por widgets
+
+    Resultado
+    ---------
+        Figuras salvas no diretório definido na variável outDir ou figDir. Se figDir não
+        for passado, então as figuras são salvas no diretório outDir (SCANTEC/dataout).
+    
+    Uso
+    ---
+        import scanplot 
+        
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
+        
+        dataInicial = data_conf["Starting Time"]
+        dataFinal = data_conf["Ending Time"]
+        Vars = list(map(data_vars.get,[*data_vars.keys()]))
+        Stats = ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
+        outDir = data_conf["Output directory"]
+       
+        figDir = data_conf["Output directory"]
+ 
+        lineStyles = ['k-', 'b-', 'b--', 'r-', 'r--']
+
+        dSet = scanplot.get_dataset(data_conf,data_vars,Stats,Exps,outDir)
+
+        scanplot.plot_fields(dSet,Vars,Stats,outDir,showFig=True,saveFig=True,lineStyles=lineStyles,figDir=figDir)
+    """
+  
+    # tExt é uma variável global e o seu valor é sempre atualizado
+    global tExt
+
+    # Verifica se foram passados os argumentos opcionais e atribui os valores
+    if 'combine' in kwargs:
+        combine = kwargs['combine']
+    else:
+        combine = gvars.combine
+
+    if 'tExt' in kwargs:
+        tExt = kwargs['tExt']      
+        # Atualiza o valor global de tExt
+        gvars.tExt = tExt
+    else:
+        tExt = gvars.tExt
+
+    if 'figDir' in kwargs:
+        figDir = kwargs['figDir']
+        # Verifica se o diretório figDir existe e cria se necessário
+        if not os.path.exists(figDir):
+            os.makedirs(figDir)
+    else:
+        figDir = outDir
+
+    if 'showFig' in kwargs:
+        showFig = kwargs['showFig']
+    else:
+        showFig = gvars.showFig
+
+    if 'saveFig' in kwargs:
+        saveFig = kwargs['saveFig']
+    else:
+        saveFig = gvars.saveFig
+
+    if 'lineStyles' in kwargs:
+        lineStyles = kwargs['lineStyles']
+    else:
+        lineStyles = gvars.lineStyles
+
+    if 'hvplot' in kwargs:
+        hvplot = kwargs['hvplot']
+    else:
+        hvplot = gvars.hvplot
+
+    # Opção combine=True    
+    if combine and hvplot:
+    
+        if isnotebook(get_ipython().__class__.__name__): # seções iterativas
+            if showFig:
+                ipython.magic('matplotlib inline')           
+                #mpl.rc('figure', max_open_warning = 0)
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+            else:
+                ipython.magic('matplotlib agg')           
+        else: # seções não iterativas
+            if not showFig:
+                mpl.use('agg')
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+
+        print('combine=True and hvplot=True')
+
+        fld_obj_lst = []
+        for var in list(dSet.keys()):
+
+            fld_obj = dSet[var].hvplot(groupby='time', title=var, colorbar=True, 
+                                       width=300, height=150) 
+            fld_obj_lst.append(fld_obj)
+
+            layout = hv.Layout(fld_obj_lst).cols(3)
+
+            hv_panel = pn.panel(layout)
+            fld_pnl = pn.panel(layout, center=True, widget_type='scrubber', widget_location='top')
+
+#            if saveFig:
+#                    fig_name = 'FIELDS.png'
+#                    hv.save(fld_obj, fig_name, fmt='png')
+
+#            if showFig:
+#                plt.show()
+#            else:
+#                plt.close(fig)     
+
+
+        return fld_pnl
+
+    elif combine and not hvplot:
+
+        if isnotebook(get_ipython().__class__.__name__): # seções iterativas
+            if showFig:
+                ipython.magic('matplotlib inline')           
+                #mpl.rc('figure', max_open_warning = 0)
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+            else:
+                ipython.magic('matplotlib agg')           
+        else: # seções não iterativas
+            if not showFig:
+                mpl.use('agg')
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+
+        print('combine=True and hvplot=False')
+
+        return 
+
+    elif not combine and hvplot:
+
+        if isnotebook(get_ipython().__class__.__name__): # seções iterativas
+            if showFig:
+                ipython.magic('matplotlib inline')           
+                #mpl.rc('figure', max_open_warning = 0)
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+            else:
+                ipython.magic('matplotlib agg')           
+        else: # seções não iterativas
+            if not showFig:
+                mpl.use('agg')
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+
+        print('combine=False and hvplot=True')
+
+        # Lista de regiões no dicionário dSet
+        Regs = list(dSet.keys())
+
+        # Lista com os rótulos (VAR:LEV) na lista de variáveis Vars
+        Varss = [tpl[0] for tpl in Vars]
+
+        # Lista com os nomes dos arquivos binários no dicionário dSet
+        ffile = list(dSet[Regs[0]].keys())
+
+        # Quantidade de tempos no dicionário dSet
+        ntime = len(dSet[Regs[0]][ffile[0]].time)-1
+
+        # exp_name e date_range são partes do nome no primeiro arquivo binário no dicionário dSet
+        exp_name = ffile[0].split('_')[0][4:]
+        date_range = ffile[0].split('_')[1].split('F.scan')[0]
+
+        def dfield(region=Regs[0], statistic=Stats[0], variable=Varss[0], time='0'):
+            return dSet[region][statistic + exp_name + '_' + date_range + 'F.scan'][variable].isel(time=time).hvplot(width=500, height=250)
+        
+        dmap = hv.DynamicMap(dfield, 
+                             kdims=['region', 'statistic', 'variable', 'time']).redim.values(region=tuple(Regs), 
+                                                                                              statistic=tuple(Stats),
+                                                                                              variable=tuple(Varss)).redim.range(time=(0,ntime))
+                                                                                            
+        
+        # Gráficos
+        
+        hv_panel = pn.panel(dmap, center=True, widget_location='right_top')
+        
+        #hv_panel.pprint()
+        
+        widgets = hv_panel[1]
+        
+        pn.Column(
+            pn.Row(*widgets),
+            hv_panel[0])
+
+        return widgets 
+
+    # Opção combine=False (padrão)
+    else:
+            
+        if isnotebook(get_ipython().__class__.__name__):
+            if showFig:
+                ipython.magic('matplotlib inline')           
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+            else:
+                ipython.magic('matplotlib agg')           
+        else:
+            if not showFig:
+                mpl.use('agg')
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+
+        print('combine=False and hvplot=False')
+
+        return 

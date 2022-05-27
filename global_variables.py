@@ -23,3 +23,5 @@ figDir = None
 showFig = False
 saveFig = False
 lineStyles = None
+save = False
+hvplot = False
