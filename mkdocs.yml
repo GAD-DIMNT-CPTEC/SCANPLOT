@@ -4,8 +4,8 @@ site_author: Carlos Frederico Bastarz
 site_description: Site com a documentação e exemplos de uso do SCANPLOT
 
 # Repository
-repo_name: cfbastarz/SCANPLOT
-repo_url: https://github.com/cfbastarz/SCANPLOT
+repo_name: GAM-DIMNT-CPTEC/SCANPLOT
+repo_url: https://github.com/GAM-DIMNT-CPTEC/SCANPLOT
 edit_uri: edit/main/docs/
 
 # Page tree
@@ -45,7 +45,7 @@ extra:
       - icon: fontawesome/brands/youtube
         link: https://www.youtube.com/channel/UCYtOSAm2NlYArmPwUkg1kUw
       - icon: fontawesome/brands/github
-        link: https://github.com/cfbastarz
+        link: https://github.com/GAM-DIMNT-CPTEC
       - icon: fontawesome/solid/paper-plane
         link: mailto:cfbastarz@gmail.com
 

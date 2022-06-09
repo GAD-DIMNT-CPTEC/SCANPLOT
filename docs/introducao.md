@@ -9,7 +9,7 @@ O módulo `scanplot` possui as seguintes funções:
 5. `plot_scorecard`: esta função plota um scorecard a partir dos dataframes;
 6. `plot_dTaylor`: esta função plota um diagrama de Taylor a partir dos dataframes.
 
-Estas funções estão implementadas em diferentes scripts que fazem parte do módulo do SCANPLOT. Acesse o repositório em [https://github.com/cfbastarz/SCANPLOT](https://github.com/cfbastarz/SCANPLOT) para conhecer mais sobre as implementações.
+Estas funções estão implementadas em diferentes scripts que fazem parte do módulo do SCANPLOT. Acesse o repositório em [https://github.com/GAM-DIMNT-CPTEC/SCANPLOT](https://github.com/GAM-DIMNT-CPTEC/SCANPLOT) para conhecer mais sobre as implementações.
 
 As funções possuem formas específicas de utilização. Para saber como utilizá-las, carregue primeiro o módulo `scanplot`:
 

@@ -2,7 +2,7 @@
 
 O SCANTEC é um software de linha de comando escrito em linguagem Fortran preparado para ler, interpolar e calcular as estatísticas básicas (Viés, Raiz do Erro Quadrático Médio e Correlação de Anomalias) a partir dos resultados de modelos de previsão numérica de tempo, como os modelos BAM, BRAMS e Eta. O SCANPLOT faz o trabalho de criar as estruturas de dados adequadas e plotar os resultados. As estruturas de dados criadas pelo SCANPLOT, são determinadas a partir das tabelas com o resumo das estatísticas calculadas pelo SCANTEC. Para utilizar o SCANPLOT, o usuário deve ler os arquivos de namelist e definições dos modelos utilizados nas avaliações, de forma que o software saiba quais foram as definições utilizadas pelo usuário e em que local estão armazenadas as tabelas com os resultados.
 
-Para isso, basta utilizar a função `read_namelists` a partir do módulo principal `scanplot`. A função `read_namelists` está implementada no script [`core_scanplot.py`](https://github.com/cfbastarz/SCANPLOT/blob/master/core_scanplot.py) do SCANPLOT. Esta e as demais funções, podem ser acessadas a partir do módulo principal, o qual deverá ser carregado:
+Para isso, basta utilizar a função `read_namelists` a partir do módulo principal `scanplot`. A função `read_namelists` está implementada no script [`core_scanplot.py`](https://github.com/GAM-DIMNT-CPTEC/SCANPLOT/blob/master/core_scanplot.py) do SCANPLOT. Esta e as demais funções, podem ser acessadas a partir do módulo principal, o qual deverá ser carregado:
 
 
 === "Comando"

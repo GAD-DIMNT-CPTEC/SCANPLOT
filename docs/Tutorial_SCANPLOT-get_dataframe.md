@@ -1,6 +1,6 @@
 # Função get_dataframe
 
-Com as informações dos arquivos de namelist do SCANTEC carregados, o próximo passo é ler as tabelas geradas na avaliação com o SCANTEC e transformá-las em dataframes do Pandas. Para isso, o usuário deverá utilizar a função `get_dataframe` do módulo `scanplot`. Esta função está implementada no script [`data_structures.py`](https://github.com/cfbastarz/SCANPLOT/blob/master/data_structures.py) do SCANPLOT.
+Com as informações dos arquivos de namelist do SCANTEC carregados, o próximo passo é ler as tabelas geradas na avaliação com o SCANTEC e transformá-las em dataframes do Pandas. Para isso, o usuário deverá utilizar a função `get_dataframe` do módulo `scanplot`. Esta função está implementada no script [`data_structures.py`](https://github.com/GAM-DIMNT-CPTEC/SCANPLOT/blob/master/data_structures.py) do SCANPLOT.
 
 Da mesma forma como foi feito com a função `read_namelists`, pode-se digitar o comando `print(funcao.__doc__)` ou simplesmente, `help(funcao)` para descobrir como a função deve ser utilizada:
 

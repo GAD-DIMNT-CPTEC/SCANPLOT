@@ -35,7 +35,7 @@ Para obter uma cópia do SCANPLOT para uso e desenvolvimento em máquina local, 
 === "Comando"
 
     ```bash linenums="1"
-    gh repo clone cfbastarz/SCANPLOT
+    gh repo clone GAM-DIMNT-CPTEC/SCANPLOT
     ```
 
 Alternativamente, uma cópia do SCANPLOT pode ser obtida com o seguinte comando[^2]:
@@ -43,7 +43,7 @@ Alternativamente, uma cópia do SCANPLOT pode ser obtida com o seguinte comando[
 === "Comando"
 
     ```bash linenums="1"
-    wget -c https://github.com/cfbastarz/SCANPLOT/archive/refs/heads/master.zip
+    wget -c https://github.com/GAM-DIMNT-CPTEC/SCANPLOT/archive/refs/heads/master.zip
     ```
 
 ## Instalação do SCANPLOT
