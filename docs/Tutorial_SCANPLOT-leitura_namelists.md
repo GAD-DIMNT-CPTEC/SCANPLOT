@@ -58,7 +58,7 @@ A função `read_namelists` recebe um caminho (raiz da instalação do SCANTEC, 
 === "Comando"
 
     ```python linenums="1"
-    data_vars, data_conf = scanplot.read_namelists('/scripts/ensemble/SCANTEC.TESTS')
+    data_vars, data_conf = scanplot.read_namelists('test/SCANTEC.TESTS')
     ```
 
 Para inspecionar o conteúdo e a estrutura dos dados contidos nos objetos `data_conf` e `data_vars`, basta digitar os nomes no prompt:
