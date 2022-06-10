@@ -23,6 +23,7 @@ nav:
     - 'plot_scorecard': Tutorial_SCANPLOT-plot_scorecard.md
     - 'plot_dTaylor': Tutorial_SCANPLOT-plot_dtaylor.md
     - 'plot_lines_tStudent': Tutorial_SCANPLOT-plot_lines_tstudent.md
+    - 'test': SCANPLOT-tests-get_dataset-holoviews-site.ipynb
 
 #Configuration
 theme: 
@@ -83,6 +84,6 @@ plugins:
   - mkdocs-video
   - search
 #  - with-pdf
-#  - mkdocs-jupyter
+  - mkdocs-jupyter
 #  - mkdocs-jupyter:
 #      theme: dark
