@@ -1,6 +1,24 @@
 # Instalação
 
-Para a instalação do SCANPLOT, recomenda-se a utilização da distribuição Anaconda. Para instalar o Anaconda, acesse [https://www.anaconda.com/products/distribution](https://www.anaconda.com/products/distribution), baixe o pacote e realize a instalação da distribuição no seu computador. Esta etapa é importante, pois no repositório do SCANPLOT, há um arquivo com a definição do ambiente que será utilizado para a instalação de todas as dependências.
+Para a instalação do SCANPLOT, recomenda-se a utilização da distribuição Anaconda. Para instalar o Anaconda, acesse [https://www.anaconda.com/products/distribution](https://www.anaconda.com/products/distribution), baixe o pacote e realize a instalação da distribuição no seu computador. Esta etapa é importante, pois no repositório do SCANPLOT há um arquivo com a definição do ambiente que será utilizado para a instalação de todas as dependências.
+
+## Obtenção do SCANPLOT
+
+Para obter uma cópia do SCANPLOT para uso e desenvolvimento em máquina local, utilize o comando a seguir[^1]:
+
+=== "Comando"
+
+    ```bash linenums="1"
+    gh repo clone GAM-DIMNT-CPTEC/SCANPLOT
+    ```
+
+Alternativamente, uma cópia do SCANPLOT pode ser obtida com o seguinte comando[^2]:
+
+=== "Comando"
+
+    ```bash linenums="1"
+    wget -c https://github.com/GAM-DIMNT-CPTEC/SCANPLOT/archive/refs/heads/master.zip
+    ```
 
 ## Ambiente do Python para o SCANPLOT
 
@@ -27,24 +45,6 @@ Após a instalação dos pacotes, basta ativar o ambiente recém criado com o co
     ```
 
 Nesta etapa, todos os pacotes necessário para uso e desenvolvimento do SCANPLOT já estão disponíveis.
-
-## Obtenção do SCANPLOT
-
-Para obter uma cópia do SCANPLOT para uso e desenvolvimento em máquina local, utilize o comando a seguir[^1]:
-
-=== "Comando"
-
-    ```bash linenums="1"
-    gh repo clone GAM-DIMNT-CPTEC/SCANPLOT
-    ```
-
-Alternativamente, uma cópia do SCANPLOT pode ser obtida com o seguinte comando[^2]:
-
-=== "Comando"
-
-    ```bash linenums="1"
-    wget -c https://github.com/GAM-DIMNT-CPTEC/SCANPLOT/archive/refs/heads/master.zip
-    ```
 
 ## Instalação do SCANPLOT
 
