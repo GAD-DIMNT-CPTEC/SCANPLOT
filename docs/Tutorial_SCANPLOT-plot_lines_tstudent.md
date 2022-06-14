@@ -2035,7 +2035,7 @@ Digite `dTable_series` para verificar a sua estrutura[^3]:
      15     1.182     0.104     0.055     0.282  }
     ```
 
-[^3]: A série de dados foi truncado devido ao seu tamanho extenso.
+[^3]: A série de dados foi truncada devido ao seu tamanho extenso.
 
 As tabelas de avaliação do período geradas pelo SCANTEC, já foram previamente carregadas através do comando `dTable = get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,series=False)`.
 
