@@ -83,6 +83,14 @@ O parâmetro `Vars` também é uma lista, mas é definido de forma diferente. O 
     figDir = outDir + '/figs'
     ```
 
+!!! note "Nota"
+
+    No exemplo acima, o parâmetro `outDir` considera o valor que consta no arquivo `scantec.conf`. Para uso com os arquivos de teste (veja o diretório `test` na raiz da instalação do SCANTEC), considere alterar o valor deste parâmetro para que o SCANPLOT possa encontrar os arquivos de teste que estão dentro da sua cópia local do SCANPLOT: 
+    ```python linenums="1"
+    outDir = '/algum/local/SCANPLOT/test/SCANTEC.TESTS/dataout'
+    ```
+
+
 !!! tip "Dica"
 
     Os comandos:
