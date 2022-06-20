@@ -45,6 +45,7 @@ import hvplot.xarray
 import holoviews as hv
 from holoviews import opts
 import panel as pn
+import param
 
 # Esta instrução é utilizada em conjunto com a opção showFig
 # para determinar se o script está sendo chamado a partir de uma seção
@@ -986,31 +987,32 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
                 mpl.use('agg')
                 mpl.rcParams.update({'figure.max_open_warning': 0})
 
-        print('combine=True and hvplot=True')
+        #print('combine=True and hvplot=True')
 
-        fld_obj_lst = []
-        for var in list(dSet.keys()):
+        def display_field(filename, variable, time):
+            tmp = dSet[filename][variable].isel(time=time).load()
+            return tmp.hvplot.contourf(colorbar=True, coastline=True, global_extent=True, frame_height=250, 
+                                       crs=ccrs.PlateCarree(), projection=ccrs.PlateCarree(), levels=10)
+        
+        filenames = list(dSet.keys())
+        variables = list(dSet[filenames[0]].data_vars)
+        times = list(dSet[filenames[0]].time.values)
+        
+        class SDDisplay(param.Parameterized):
+            variable  = param.Selector(default=variables[0], objects=variables)
+            filename  = param.Selector(default=filenames[0], objects=filenames)
+            time      = param.Integer(default=0, bounds=(0, len(times)-1))
+        
+            def view(self):
+                return display_field(self.filename, self.variable, self.time)
+            
+        obj = SDDisplay()
+        
+        title = "### Distribuição Espacial das Estatísticas\nAjuste os parâmetros abaixo para mostrar o gráfico."
 
-            fld_obj = dSet[var].hvplot(groupby='time', title=var, colorbar=True, 
-                                       width=300, height=150) 
-            fld_obj_lst.append(fld_obj)
+        SDDisplay(name='SDDisplay', filename=filenames[0], variable=variables[0], time=0)
 
-            layout = hv.Layout(fld_obj_lst).cols(3)
-
-            hv_panel = pn.panel(layout)
-            fld_pnl = pn.panel(layout, center=True, widget_type='scrubber', widget_location='top')
-
-#            if saveFig:
-#                    fig_name = 'FIELDS.png'
-#                    hv.save(fld_obj, fig_name, fmt='png')
-
-#            if showFig:
-#                plt.show()
-#            else:
-#                plt.close(fig)     
-
-
-        return fld_pnl
+        return pn.Column(title, pn.Row(obj.param, obj.view))
 
     elif combine and not hvplot:
 
@@ -1026,9 +1028,7 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
                 mpl.use('agg')
                 mpl.rcParams.update({'figure.max_open_warning': 0})
 
-        print('combine=True and hvplot=False')
-
-        return 
+        #print('combine=True and hvplot=False')
 
     elif not combine and hvplot:
 
@@ -1044,46 +1044,34 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
                 mpl.use('agg')
                 mpl.rcParams.update({'figure.max_open_warning': 0})
 
-        print('combine=False and hvplot=True')
+        #print('combine=False and hvplot=True')
 
-        # Lista de regiões no dicionário dSet
-        Regs = list(dSet.keys())
+        def plot(fname, var, title):
+            return dSet[fname][var].hvplot.contourf(groupby='time', title=title, colorbar=True, coastline=True, 
+                                                    global_extent=True, frame_height=100, crs=ccrs.PlateCarree(),
+                                                    projection=ccrs.PlateCarree(), levels=10)
 
-        # Lista com os rótulos (VAR:LEV) na lista de variáveis Vars
-        Varss = [tpl[0] for tpl in Vars]
+        def playout(obj_lst):
+                layout = hv.Layout(fld_obj_lst).cols(3)
+                hv_panel = pn.panel(layout)
+                return pn.panel(layout, center=True, widget_type='scrubber', widget_location='top')
 
-        # Lista com os nomes dos arquivos binários no dicionário dSet
-        ffile = list(dSet[Regs[0]].keys())
+        fnames = list(dSet.keys())
 
-        # Quantidade de tempos no dicionário dSet
-        ntime = len(dSet[Regs[0]][ffile[0]].time)-1
+        for fname in fnames:
 
-        # exp_name e date_range são partes do nome no primeiro arquivo binário no dicionário dSet
-        exp_name = ffile[0].split('_')[0][4:]
-        date_range = ffile[0].split('_')[1].split('F.scan')[0]
+            fld_obj_lst = []
+            for var in list(dSet[fnames[0]].data_vars):
 
-        def dfield(region=Regs[0], statistic=Stats[0], variable=Varss[0], time='0'):
-            return dSet[region][statistic + exp_name + '_' + date_range + 'F.scan'][variable].isel(time=time).hvplot(width=500, height=250)
-        
-        dmap = hv.DynamicMap(dfield, 
-                             kdims=['region', 'statistic', 'variable', 'time']).redim.values(region=tuple(Regs), 
-                                                                                              statistic=tuple(Stats),
-                                                                                              variable=tuple(Varss)).redim.range(time=(0,ntime))
-                                                                                            
-        
-        # Gráficos
-        
-        hv_panel = pn.panel(dmap, center=True, widget_location='right_top')
-        
-        #hv_panel.pprint()
-        
-        widgets = hv_panel[1]
-        
-        pn.Column(
-            pn.Row(*widgets),
-            hv_panel[0])
+                title = fname.split('_')[0][0:4] + ' ' + fname.split('_')[0][4:]  + ' ' + var
 
-        return widgets 
+                fld_obj = plot(fname, var, title)        
+
+                fld_obj_lst.append(fld_obj)
+
+                fld_pnl = playout(fld_obj_lst)
+
+            return fld_pnl
 
     # Opção combine=False (padrão)
     else:
@@ -1099,6 +1087,77 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
                 mpl.use('agg')
                 mpl.rcParams.update({'figure.max_open_warning': 0})
 
-        print('combine=False and hvplot=False')
+        #print('combine=False and hvplot=False') # Faz um loop simples dentro do dicionário para plotar todas as figuras
 
-        return 
+        # Ref.: https://github.com/pydata/xarray/issues/619#issuecomment-459888596
+        def make_colorbar(ax, mappable, **kwargs):
+            from mpl_toolkits.axes_grid1 import make_axes_locatable
+            import matplotlib as mpl
+        
+            divider = make_axes_locatable(ax)
+            orientation = kwargs.pop('orientation', 'vertical')
+            if orientation == 'vertical':
+                loc = 'right'
+            elif orientation == 'horizontal':
+                loc = 'bottom'
+                
+            cax = divider.append_axes(loc, '5%', pad='3%', axes_class=mpl.pyplot.Axes)
+            ax.get_figure().colorbar(mappable, cax=cax, orientation=orientation)
+
+        for file in list(dSet.keys()):
+
+            ntime = len(dSet[file].time)-1
+
+            for time in range(ntime):
+
+                for var in list(dSet[file].data_vars):
+
+                    file_s = file.split('_')
+                    file_p1 = file_s[0]
+                    file_p2 = file_s[1].split('F.scan')[0]
+        
+                    stat = file_p1[0:4]
+                    exp = file_p1[4:8]
+        
+                    datai = file_p2[0:10]
+                    dataf = file_p2[10:20]
+        
+                    stime = dSet[file][var].isel(time=time).coords['time'].values
+                    pd_stime = pd.to_datetime(str(stime)) 
+                    ftime = pd_stime.strftime('%Y-%m-%d-%H')
+
+                    # Tamanho da figura
+                    plt.figure(figsize=(10,9))
+
+                    # Projeção
+                    ax = plt.subplot(projection=ccrs.PlateCarree())
+
+                    # Plota
+                    im = dSet[file][var].isel(time=time).plot.contourf(ax=ax, 
+                                                                      transform=ccrs.PlateCarree(),
+                                                                      add_colorbar=False)
+                    
+                    # Linhas de grade, costa e rótulos 
+                    gl = ax.gridlines(color='grey', linestyle='--', linewidth=0.5, draw_labels=True) 
+                    gl.xlabels_top, gl.ylabels_right = False, False
+                    #gl.toplabels_top, gl.rightlabels_right = False, False
+                    ax.coastlines()
+                    ax.set_aspect('equal') 
+
+                    # Barra de cores 
+                    make_colorbar(ax, im, orientation='vertical')
+
+                    # Título
+                    ax.set_title(stat + ' ' + exp + ' ' + var + ' (' + ftime + ')')
+
+                    # Se saveFig=True
+                    if saveFig: 
+                        fig_name = stat + '_' + exp + '_' + var + '-' + ftime  + str('.png')
+                        plt.savefig(os.path.join(figDir, fig_name), bbox_inches='tight', dpi=120)
+
+                    if showFig:
+                        plt.draw()
+                    else:
+                        plt.close() 
+
+        return pn
