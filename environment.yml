@@ -1,4 +1,4 @@
-name: SCANPLOT-test2
+name: SCANPLOT-test3
 channels:
   - anaconda
   - defaults
@@ -225,7 +225,7 @@ dependencies:
   - zeromq=4.3.4=h2531618_0
   - zict=2.2.0=pyhd8ed1ab_0
   - zipp=3.8.0=py37h06a4308_0
-  - zlib=1.2.12=h7f8727e_2
+  - zlib
   - zstd=1.5.2=ha4553b6_0
   - pip:
     - awesome-panel-extensions==20220313.2
