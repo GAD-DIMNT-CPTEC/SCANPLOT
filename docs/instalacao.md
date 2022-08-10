@@ -1,6 +1,43 @@
 # Instalação
 
-Para a instalação do SCANPLOT, recomenda-se a utilização da distribuição Anaconda. Para instalar o Anaconda, acesse [https://www.anaconda.com/products/distribution](https://www.anaconda.com/products/distribution), baixe o pacote e realize a instalação da distribuição no seu computador. Esta etapa é importante, pois no repositório do SCANPLOT há um arquivo com a definição do ambiente que será utilizado para a instalação de todas as dependências.
+Para a instalação do SCANPLOT, recomenda-se a utilização da distribuição Anaconda. Para instalar o Anaconda, acesse [https://www.anaconda.com/products/distribution](https://www.anaconda.com/products/distribution), baixe o pacote e realize a instalação da distribuição no seu computador. Esta etapa é importante, pois no repositório do SCANPLOT, há um arquivo com a definição do ambiente que será utilizado para a instalação de todas as dependências.
+
+## Ambiente do Python para o SCANPLOT
+
+O Python permite a criação de ambientes que podem ser utilizados para o desenvolvimento de aplicações que requerem diferentes versões de determinadas bibliotecas do Python. O Anaconda fornece o gerenciador de pacotes `conda` que será utilizado nesse processo.
+
+Para criar um ambiente apropriado para o uso do SCANPLOT, utilize o comando a seguir:
+
+!!! warning "Atenção"
+
+    A instalação de todos os pacotes do ambiente requer aproximadamente 2,5 GB de espaço em disco.
+
+=== "Comando"
+
+    ```bash linenums="1"
+    conda env create -f environment.yml
+    ```
+
+!!! tip "Dica"
+
+    Caso a resolução das dependências dos pacotes a serem instalados demore muito tempo, realize os seguintes ajustes no arquivo `$HOME/.condarc` e tente novamente:
+    ```bash linenums="1"
+    channel_priority: flexible
+    channels:
+      - defaults
+      - conda-forge
+    auto_activate_base: true
+    ```
+
+Após a instalação dos pacotes, basta ativar o ambiente recém criado com o comando:
+
+=== "Comando"
+
+    ```bash linenums="1"
+    conda activate SCANPLOT
+    ```
+
+Nesta etapa, todos os pacotes necessário para uso e desenvolvimento do SCANPLOT já estão disponíveis.
 
 ## Obtenção do SCANPLOT
 
@@ -19,32 +56,6 @@ Alternativamente, uma cópia do SCANPLOT pode ser obtida com o seguinte comando[
     ```bash linenums="1"
     wget -c https://github.com/GAM-DIMNT-CPTEC/SCANPLOT/archive/refs/heads/master.zip
     ```
-
-## Ambiente do Python para o SCANPLOT
-
-O Python permite a criação de ambientes que podem ser utilizados para o desenvolvimento de aplicações que requerem diferentes versões de determinadas bibliotecas do Python. O Anaconda fornece o gerenciador de pacotes `conda` que será utilizado nesse processo.
-
-Para criar um ambiente apropriado para o uso do SCANPLOT, utilize o comando a seguir:
-
-=== "Comando"
-
-    ```bash linenums="1"
-    conda env create -f environment.yml
-    ```
-
-!!! warning "Atenção"
-
-    A instalação de todos os pacotes do ambiente requer aproximadamente 2,8 GB de espaço em disco.
-
-Após a instalação dos pacotes, basta ativar o ambiente recém criado com o comando:
-
-=== "Comando"
-
-    ```bash linenums="1"
-    conda activate SCANPLOT
-    ```
-
-Nesta etapa, todos os pacotes necessário para uso e desenvolvimento do SCANPLOT já estão disponíveis.
 
 ## Instalação do SCANPLOT
 
