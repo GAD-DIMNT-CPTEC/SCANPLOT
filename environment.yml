@@ -1,4 +1,4 @@
-name: SCANPLOT-test4
+name: SCANPLOT-test5
 channels:
   - anaconda
   - defaults
@@ -102,7 +102,7 @@ dependencies:
   - libedit=3.1.20191231=he28a2e2_2
   - libev=4.33=h516909a_1
   - libffi=3.3=he6710b0_2
-  - libgcc-ng
+  - libgcc-ng=11.2.0
   - libgfortran-ng=12.1.0=h69a702a_16
   - libgfortran5=12.1.0=hdcd56e2_16
   - libgomp=11.2.0=h1234567_1
