@@ -22,3 +22,5 @@ As principais funções do módulo são as seguintes:
 5. `plot_dTaylor`: esta função plota um diagrama de Taylor a partir dos dataframes.
 
 A documentação do SCANPLOT pode ser encontrada em https://gam-dimnt-cptec.github.io/SCANPLOT/.
+
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode" target="_blank"><img src="https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png" alt="CC-BY-NC-SA" width="100"/></a>
