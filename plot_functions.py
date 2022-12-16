@@ -1,20 +1,7 @@
 #! /usr/bin/env python3
 
 # SCANPLOT - Um sistema de plotagem simples para o SCANTEC
-# Copyright (C) 2020 INPE
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# CC-BY-NC-SA-4.0 2022 INPE
 
 import global_variables as gvars
 
@@ -842,3 +829,307 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
     plt.close(fig)     
 
     return
+
+def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
+
+    """
+    plot_fields
+    ===========
+    
+    Esta função plota gráficos espaciais a partir de um dicionário de dataarrays com os arquivos binários do SCANTEC.
+    
+    Parâmetros de entrada
+    ---------------------
+        dSet   : objeto dicionário com uma ou mais arquivos binários do SCANTEC;
+        Vars   : lista com os nomes e níveis das variáveis;
+        Stats  : lista com os nomes das estatísticas a serem processadas;
+        outDir : string com o diretório com os arquivos binários do SCANTEC.
+
+    Parâmetros de entrada opcionais
+    -------------------------------
+        showFig    : valor Booleano para mostrar ou não as figuras durante a plotagem
+                     showFig=False (valor padrão), não mostra as figuras (mais rápido)
+                     showFig=True, mostra as figuras (mais lento);
+        saveFig    : valor Booleano para salvar ou não as figuras durante a plotagem:
+                     * saveFig=False (valor padrão), não salva as figuras;
+                     * saveFig=True, salva as figuras;
+        lineStyles : lista com as cores e os estilos das linhas (o número de elementos
+                     da lista deve ser igual ao número de experimentos);
+        figDir     : string com o diretório onde as figuras serão salvas;
+        combine    : valor Booleano para combinar os campos das estatísticas dos experimentos em um só gráfico:
+                     * combine=False (valor padrão), plota os campos em gráficos separados;
+                     * combine=True, plota os campos das mesmas estatísticas no mesmo gráfico (painel);
+        tExt       : string com o extensão dos nomes das tabelas do SCANTEC:
+                     * tExt='scan' (valor padrão), considera os arquivos binários do SCANTEC;
+                     * tExt='scam', considera os nomes dos arquivos binários das versões antigas do SCANTEC.
+        hvplot     : valor Booleano para apresentar utilizar o hvplot (holoviews) e controlar o loop temporal das figuras por meio de widgets
+                     * hvplot=False (valor padrão), apresenta os campos como um painel
+                     * hvplot=True, apresenta os campos como um loop controlado por widgets
+
+    Resultado
+    ---------
+        Figuras salvas no diretório definido na variável outDir ou figDir. Se figDir não
+        for passado, então as figuras são salvas no diretório outDir (SCANTEC/dataout).
+    
+    Uso
+    ---
+        import scanplot 
+        
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
+        
+        dataInicial = data_conf["Starting Time"]
+        dataFinal = data_conf["Ending Time"]
+        Vars = list(map(data_vars.get,[*data_vars.keys()]))
+        Stats = ["ACOR", "RMSE", "VIES"]
+        Exps = list(data_conf["Experiments"].keys())
+        outDir = data_conf["Output directory"]
+       
+        figDir = data_conf["Output directory"]
+ 
+        lineStyles = ['k-', 'b-', 'b--', 'r-', 'r--']
+
+        dSet = scanplot.get_dataset(data_conf,data_vars,Stats,Exps,outDir)
+
+        scanplot.plot_fields(dSet,Vars,Stats,outDir,showFig=True,saveFig=True,lineStyles=lineStyles,figDir=figDir)
+    """
+  
+    # tExt é uma variável global e o seu valor é sempre atualizado
+    global tExt
+
+    # Verifica se foram passados os argumentos opcionais e atribui os valores
+    if 'combine' in kwargs:
+        combine = kwargs['combine']
+    else:
+        combine = gvars.combine
+
+    if 'tExt' in kwargs:
+        tExt = kwargs['tExt']      
+        # Atualiza o valor global de tExt
+        gvars.tExt = tExt
+    else:
+        tExt = gvars.tExt
+
+    if 'figDir' in kwargs:
+        figDir = kwargs['figDir']
+        # Verifica se o diretório figDir existe e cria se necessário
+        if not os.path.exists(figDir):
+            os.makedirs(figDir)
+    else:
+        figDir = outDir
+
+    if 'showFig' in kwargs:
+        showFig = kwargs['showFig']
+    else:
+        showFig = gvars.showFig
+
+    if 'saveFig' in kwargs:
+        saveFig = kwargs['saveFig']
+    else:
+        saveFig = gvars.saveFig
+
+    if 'lineStyles' in kwargs:
+        lineStyles = kwargs['lineStyles']
+    else:
+        lineStyles = gvars.lineStyles
+
+    if 'hvplot' in kwargs:
+        hvplot = kwargs['hvplot']
+    else:
+        hvplot = gvars.hvplot
+
+    if 'avaltype' in kwargs:
+        avaltype = kwargs['avaltype']
+    else:
+        avaltype = gvars.avaltype
+
+
+    # Opção combine=True    
+    if combine and hvplot:
+    
+        if isnotebook(get_ipython().__class__.__name__): # seções iterativas
+            if showFig:
+                ipython.magic('matplotlib inline')           
+                #mpl.rc('figure', max_open_warning = 0)
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+            else:
+                ipython.magic('matplotlib agg')           
+        else: # seções não iterativas
+            if not showFig:
+                mpl.use('agg')
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+
+        #print('combine=True and hvplot=True')
+
+        def display_field(filename, variable, time):
+            tmp = dSet[filename][variable].isel(time=time).load()
+            return tmp.hvplot.contourf(colorbar=True, coastline=True, global_extent=True, frame_height=450, 
+                                       crs=ccrs.PlateCarree(), projection=ccrs.PlateCarree(), levels=10)
+        
+        filenames = list(dSet.keys())
+        variables = list(dSet[filenames[0]].data_vars)
+        times = list(dSet[filenames[0]].time.values)
+        
+        class SDDisplay(param.Parameterized):
+            variable  = param.Selector(default=variables[0], objects=variables)
+            filename  = param.Selector(default=filenames[0], objects=filenames)
+            time      = param.Integer(default=0, bounds=(0, len(times)-1))
+        
+            def view(self):
+                return display_field(self.filename, self.variable, self.time)
+            
+        obj = SDDisplay()
+        
+        title = "## Distribuição Espacial das Estatísticas\nAjuste os parâmetros abaixo para mostrar o gráfico."
+
+        SDDisplay(name='SDDisplay', filename=filenames[0], variable=variables[0], time=0)
+
+        return pn.Column(avaltype, title, pn.Row(obj.param, obj.view))
+        #return pn.Column(title, pn.Row(obj.param, obj.view))
+
+    elif combine and not hvplot:
+
+        if isnotebook(get_ipython().__class__.__name__): # seções iterativas
+            if showFig:
+                ipython.magic('matplotlib inline')           
+                #mpl.rc('figure', max_open_warning = 0)
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+            else:
+                ipython.magic('matplotlib agg')           
+        else: # seções não iterativas
+            if not showFig:
+                mpl.use('agg')
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+
+        #print('combine=True and hvplot=False')
+
+    elif not combine and hvplot:
+
+        if isnotebook(get_ipython().__class__.__name__): # seções iterativas
+            if showFig:
+                ipython.magic('matplotlib inline')           
+                #mpl.rc('figure', max_open_warning = 0)
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+            else:
+                ipython.magic('matplotlib agg')           
+        else: # seções não iterativas
+            if not showFig:
+                mpl.use('agg')
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+
+        #print('combine=False and hvplot=True')
+
+        def plot(fname, var, title):
+            return dSet[fname][var].hvplot.contourf(groupby='time', title=title, colorbar=True, coastline=True, 
+                                                    global_extent=True, frame_height=100, crs=ccrs.PlateCarree(),
+                                                    projection=ccrs.PlateCarree(), levels=10)
+
+        def playout(obj_lst):
+                layout = hv.Layout(fld_obj_lst).cols(3)
+                hv_panel = pn.panel(layout)
+                return pn.panel(layout, center=True, widget_type='scrubber', widget_location='top')
+
+        fnames = list(dSet.keys())
+
+        for fname in fnames:
+
+            fld_obj_lst = []
+            for var in list(dSet[fnames[0]].data_vars):
+
+                title = fname.split('_')[0][0:4] + ' ' + fname.split('_')[0][4:]  + ' ' + var
+
+                fld_obj = plot(fname, var, title)        
+
+                fld_obj_lst.append(fld_obj)
+
+                fld_pnl = playout(fld_obj_lst)
+
+            return fld_pnl
+
+    # Opção combine=False (padrão)
+    else:
+            
+        if isnotebook(get_ipython().__class__.__name__):
+            if showFig:
+                ipython.magic('matplotlib inline')           
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+            else:
+                ipython.magic('matplotlib agg')           
+        else:
+            if not showFig:
+                mpl.use('agg')
+                mpl.rcParams.update({'figure.max_open_warning': 0})
+
+        #print('combine=False and hvplot=False') # Faz um loop simples dentro do dicionário para plotar todas as figuras
+
+        # Ref.: https://github.com/pydata/xarray/issues/619#issuecomment-459888596
+        def make_colorbar(ax, mappable, **kwargs):
+            from mpl_toolkits.axes_grid1 import make_axes_locatable
+            import matplotlib as mpl
+        
+            divider = make_axes_locatable(ax)
+            orientation = kwargs.pop('orientation', 'vertical')
+            if orientation == 'vertical':
+                loc = 'right'
+            elif orientation == 'horizontal':
+                loc = 'bottom'
+                
+            cax = divider.append_axes(loc, '5%', pad='3%', axes_class=mpl.pyplot.Axes)
+            ax.get_figure().colorbar(mappable, cax=cax, orientation=orientation)
+
+        for file in list(dSet.keys()):
+
+            ntime = len(dSet[file].time)-1
+
+            for time in range(ntime):
+
+                for var in list(dSet[file].data_vars):
+
+                    file_s = file.split('_')
+                    file_p1 = file_s[0]
+                    file_p2 = file_s[1].split('F.scan')[0]
+        
+                    stat = file_p1[0:4]
+                    exp = file_p1[4:8]
+        
+                    datai = file_p2[0:10]
+                    dataf = file_p2[10:20]
+        
+                    stime = dSet[file][var].isel(time=time).coords['time'].values
+                    pd_stime = pd.to_datetime(str(stime)) 
+                    ftime = pd_stime.strftime('%Y-%m-%d-%H')
+
+                    # Tamanho da figura
+                    plt.figure(figsize=(10,9))
+
+                    # Projeção
+                    ax = plt.subplot(projection=ccrs.PlateCarree())
+
+                    # Plota
+                    im = dSet[file][var].isel(time=time).plot.contourf(ax=ax, 
+                                                                      transform=ccrs.PlateCarree(),
+                                                                      add_colorbar=False)
+                    
+                    # Linhas de grade, costa e rótulos 
+                    gl = ax.gridlines(color='grey', linestyle='--', linewidth=0.5, draw_labels=True) 
+                    gl.xlabels_top, gl.ylabels_right = False, False
+                    #gl.toplabels_top, gl.rightlabels_right = False, False
+                    ax.coastlines()
+                    ax.set_aspect('equal') 
+
+                    # Barra de cores 
+                    make_colorbar(ax, im, orientation='vertical')
+
+                    # Título
+                    ax.set_title(stat + ' ' + exp + ' ' + var + ' (' + ftime + ')')
+
+                    # Se saveFig=True
+                    if saveFig: 
+                        fig_name = stat + '_' + exp + '_' + var + '-' + ftime  + str('.png')
+                        plt.savefig(os.path.join(figDir, fig_name), bbox_inches='tight', dpi=120)
+
+                    if showFig:
+                        plt.draw()
+                    else:
+                        plt.close() 
+
+        return pn

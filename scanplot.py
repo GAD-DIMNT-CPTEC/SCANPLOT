@@ -1,18 +1,5 @@
 # SCANPLOT - Um sistema de plotagem simples para o SCANTEC
-# Copyright (C) 2020 INPE
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# CC-BY-NC-SA-4.0 2022 INPE
 
 """
 scanplot
@@ -33,8 +20,8 @@ Funções
                           os dataframes com as tabelas do SCANTEC.
 """
 
-from core_scanplot import read_namelists
+from core_scanplot import read_namelists, dummy
 from data_structures import get_dataframe, get_dataset
-from aux_functions import concat_tables_and_loc, df_fill_nan, calc_tStudent 
-from plot_functions import plot_lines, plot_lines_tStudent, plot_scorecard, plot_dTaylor 
-from gui_functions import show_buttons
+from aux_functions import concat_tables_and_loc, df_fill_nan, calc_tStudent, isnotebook 
+from plot_functions import plot_lines, plot_lines_tStudent, plot_scorecard, plot_dTaylor, plot_fields 
+from gui_functions import show_interface

@@ -1,20 +1,9 @@
 #! /usr/bin/env python3
 
 # SCANPLOT - Um sistema de plotagem simples para o SCANTEC
-# Copyright (C) 2020 INPE
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# CC-BY-NC-SA-4.0 2022 INPE
+
+import global_variables as gvars
 
 import re
 import os
@@ -38,6 +27,19 @@ def read_namelists(basepath):
     ---------------------
         basepath : diretório raiz da instalação do SCANTEC.
         
+    Parâmetros de entrada opcionais
+    -------------------------------
+        basecomp : string com o complemento do diretório raiz da instalação do SCANTEC (específico
+                   para múltiplos experimentos).
+        scanconf : valor Booleano para indicar apenas o diretório de instalação do SCANTEC ou o caminho 
+                   para o arquivo de configurações (considera o caminho para o diretório tables como relativo):
+                   * scanconf=False (valor padrão), considera como argumento apenas o diretório de instalação 
+                                    do SCANTEC;
+                   * scantec=True, considera o caminho absoluto para o nome do arquivo de instalação 'scantec.conf' 
+        returnpath : valor Booleano para retornar o caminho absoluto da instalação do SCANTEC.
+                     * returnpath=False (valor padrão), não retorna o valor da variável 'basepath';
+                     * returnpath=True, retorna o valor da variável 'basepath'
+
     Resultados
     ----------
         VarsLevs : dicionário com as variáveis, níveis e nomes definidos no arquivo scantec.vars;
@@ -50,9 +52,35 @@ def read_namelists(basepath):
         data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
     """
     
+    # Verifica se foram passados os argumentos opcionais e atribui os valores
+    if 'returnpath' in kwargs:
+        returnpath = kwargs['returnpath']
+    else:
+        returnpath = gvars.returnpath
+
+    if 'scanconf' in kwargs:
+        scanconf = kwargs['scanconf']
+    else:
+        scanconf = gvars.scanconf
+
+    if 'basecomp' in kwargs:
+        basecomp = kwargs['basecomp']
+        if scanconf:
+            filename_conf = os.path.join(basepath)
+        else:
+            filename_conf = os.path.join(basepath, 'bin', basecomp, 'scantec.conf') 
+    else:
+        if scanconf:
+            filename_conf = os.path.join(basepath)
+        else:
+            filename_conf = os.path.join(basepath, 'bin/scantec.conf') 
+
     # Lê o arquivo scantec.vars e transforma a lista de variáveis e níveis e um dicionário
-    filename = os.path.join(basepath, 'tables/scantec.vars') 
-    
+    if scanconf:
+        filename_vars = os.path.join(os.path.dirname(basepath), '..', 'tables/scantec.vars')
+    else:
+        filename_vars = os.path.join(basepath, 'tables/scantec.vars') 
+   
     VarsLevs = {}
     
     # Com o método "with open", o arquivo é fechado automaticamente ao final
@@ -83,7 +111,8 @@ def read_namelists(basepath):
     Exps = {}
     
     def key_value_exps(lexps):
-      for i in range(2, len(lexps)): # 2: desconsidera as linhas "Experiments:" e "#ModelId Name Diretory File_Name_with_mask"
+      #for i in range(2, len(lexps)): # 2: desconsidera as linhas "Experiments:" e "#ModelId Name Diretory File_Name_with_mask"
+      for i in range(1, len(lexps)): # 2: desconsidera as linhas "Experiments:" e "#ModelId Name Diretory File_Name_with_mask"
         slexps = lexps[i].split()
         Exps[slexps[1]] = [slexps[0], slexps[2]]
         Confs['Experiments'] = Exps
@@ -139,4 +168,37 @@ def read_namelists(basepath):
         elif line.startswith('Output directory'):
           key_value(line)
 
-    return VarsLevs, Confs
+    if returnpath:
+        if scanconf:
+            basepath = os.path.join(os.path.dirname(basepath), '..')
+        return VarsLevs, Confs, basepath
+    else:
+        return VarsLevs, Confs
+
+def dummy(**kwargs): 
+
+    """
+    dummy
+    ==============
+    
+    Esta função simplesmente recebe e devolve um ou mais argumentos e é utilizada apenas para testes genéricos
+    de chamada de funções a partir do SCANPLOT.
+    
+    Parâmetros de entrada
+    ---------------------
+        variavel : variável dos tipos string, Booleana, inteira, real etc.
+
+    Resultados
+    ----------
+        variavel : dicionário com a(s) variável(is) passada(s) para a função.
+
+    Uso
+    ---
+        import scanplot
+        
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
+
+        tmp = scanplot.dummy(teste=teste)
+    """
+
+    return kwargs    
