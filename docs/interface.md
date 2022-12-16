@@ -2,6 +2,10 @@
 
 Com o lançamento da V1.1.0, está disponível uma interface gráfica mínima para a inspeção das tabelas e dos arquivos com a distribuição espacial das estatísticas. A partir da interface ainda não é possível executar as funções de plotagem do SCANPLOT, o que deverá ser feito nas próximas versões do programa.
 
+!!! bug "Cuidado"
+
+    Esta função está implementada mas ainda não foi testada e pode conter bugs.
+
 Há duas formas de carregar a interface gráfica do SCANPLOT:
 
 1. Pelo terminal:
