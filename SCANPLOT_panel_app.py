@@ -1,10 +1,11 @@
-#!/usr/bin/env python
-# coding: utf-8
+#! /usr/bin/env python3
 
-# Uso
+# SCANPLOT - Um sistema de plotagem simples para o SCANTEC
+# CC-BY-NC-SA-4.0 2022 INPE
+
+# Uso:
 # conda activate SCANPLOT 
 # panel serve SCANPLOT_panel_app.py --autoreload  
-# @cfbastarz
 
 import numpy as np
 import pandas as pd
