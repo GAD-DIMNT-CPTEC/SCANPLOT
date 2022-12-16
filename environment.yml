@@ -116,6 +116,7 @@ dependencies:
   - pandas
   - pandoc
   - pandocfilters
+  - panel
   - parso
   - pcre
   - pexpect
