@@ -14,7 +14,7 @@ import pandas as pd
 
 from datetime import date, datetime, timedelta
 
-def read_namelists(basepath):
+def read_namelists(basepath,**kwargs):
 
     """
     read_namelists
@@ -84,15 +84,15 @@ def read_namelists(basepath):
     VarsLevs = {}
     
     # Com o método "with open", o arquivo é fechado automaticamente ao final
-    with open(filename,'r') as scantec_vars:
+    with open(filename_vars,'r') as scantec_vars:
       for idx, line in enumerate(scantec_vars.readlines(), start=-4):
         rline = line.lstrip()
         if not (rline.startswith('#') or rline.startswith('::') or rline.startswith('variables:')):
           varlevdesc = rline.strip().split(' ', 1)
           VarsLevs[idx] = (varlevdesc[0], varlevdesc[1].strip('\"'))
         
-    # Lê do arquivo scantec.conf e transforma as informações principais em um dicionário
-    filename = os.path.join(basepath, 'bin/scantec.conf') 
+#    # Lê do arquivo scantec.conf e transforma as informações principais em um dicionário
+#    filename = os.path.join(basepath, 'bin/scantec.conf') 
     
     # A função a seguir lê a linha com a informação requerida e cria uma lista com os elementos separados 
     # de acordo com o separador ':'
@@ -119,7 +119,7 @@ def read_namelists(basepath):
       return Confs
     
     # Com o método "with open", o arquivo é fechado automaticamente ao final
-    with open(filename,'r') as scantec_conf:
+    with open(filename_conf,'r') as scantec_conf:
       for line in scantec_conf:
         if line.startswith('Starting Time'):
           key_value(line)
