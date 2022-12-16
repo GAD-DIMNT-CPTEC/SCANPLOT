@@ -17,12 +17,13 @@ nav:
     - 'Leitura dos namelists do SCANTEC': Tutorial_SCANPLOT-leitura_namelists.md
     - 'Função get_dataframe': Tutorial_SCANPLOT-get_dataframe.md
     - 'Explorando os dataframes': Tutorial_SCANPLOT-explorando_dataframes.md
-  - 'Funções de plotagem do SCANPLOT':
+  - 'Funções de plotagem':
     - 'Introdução': funcoes_plotagem.md
     - 'plot_lines': Tutorial_SCANPLOT-plot_lines.md
     - 'plot_scorecard': Tutorial_SCANPLOT-plot_scorecard.md
     - 'plot_dTaylor': Tutorial_SCANPLOT-plot_dtaylor.md
     - 'plot_lines_tStudent': Tutorial_SCANPLOT-plot_lines_tstudent.md
+  - 'Interface gráfica': interface.md
 
 #Configuration
 theme: 
