@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import global_variables as gvars
+
 import re
 import os
 import ntpath
@@ -42,6 +44,14 @@ def read_namelists(basepath,**kwargs):
     -------------------------------
         basecomp : string com o complemento do diretório raiz da instalação do SCANTEC (específico
                    para múltiplos experimentos).
+        scanconf : valor Booleano para indicar apenas o diretório de instalação do SCANTEC ou o caminho 
+                   para o arquivo de configurações (considera o caminho para o diretório tables como relativo):
+                   * scanconf=False (valor padrão), considera como argumento apenas o diretório de instalação 
+                                    do SCANTEC;
+                   * scantec=True, considera o caminho absoluto para o nome do arquivo de instalação 'scantec.conf' 
+        returnpath : valor Booleano para retornar o caminho absoluto da instalação do SCANTEC.
+                     * returnpath=False (valor padrão), não retorna o valor da variável 'basepath';
+                     * returnpath=True, retorna o valor da variável 'basepath'
 
     Resultados
     ----------
@@ -56,15 +66,34 @@ def read_namelists(basepath,**kwargs):
     """
     
     # Verifica se foram passados os argumentos opcionais e atribui os valores
+    if 'returnpath' in kwargs:
+        returnpath = kwargs['returnpath']
+    else:
+        returnpath = gvars.returnpath
+
+    if 'scanconf' in kwargs:
+        scanconf = kwargs['scanconf']
+    else:
+        scanconf = gvars.scanconf
+
     if 'basecomp' in kwargs:
         basecomp = kwargs['basecomp']
-        filename_conf = os.path.join(basepath, 'bin', basecomp, 'scantec.conf') 
+        if scanconf:
+            filename_conf = os.path.join(basepath)
+        else:
+            filename_conf = os.path.join(basepath, 'bin', basecomp, 'scantec.conf') 
     else:
-        filename_conf = os.path.join(basepath, 'bin/scantec.conf') 
+        if scanconf:
+            filename_conf = os.path.join(basepath)
+        else:
+            filename_conf = os.path.join(basepath, 'bin/scantec.conf') 
 
     # Lê o arquivo scantec.vars e transforma a lista de variáveis e níveis e um dicionário
-    filename_vars = os.path.join(basepath, 'tables/scantec.vars') 
-    
+    if scanconf:
+        filename_vars = os.path.join(os.path.dirname(basepath), '..', 'tables/scantec.vars')
+    else:
+        filename_vars = os.path.join(basepath, 'tables/scantec.vars') 
+   
     VarsLevs = {}
     
     # Com o método "with open", o arquivo é fechado automaticamente ao final
@@ -151,4 +180,37 @@ def read_namelists(basepath,**kwargs):
         elif line.startswith('Output directory'):
           key_value(line)
 
-    return VarsLevs, Confs
+    if returnpath:
+        if scanconf:
+            basepath = os.path.join(os.path.dirname(basepath), '..')
+        return VarsLevs, Confs, basepath
+    else:
+        return VarsLevs, Confs
+
+def dummy(**kwargs): 
+
+    """
+    dummy
+    ==============
+    
+    Esta função simplesmente recebe e devolve um ou mais argumentos e é utilizada apenas para testes genéricos
+    de chamada de funções a partir do SCANPLOT.
+    
+    Parâmetros de entrada
+    ---------------------
+        variavel : variável dos tipos string, Booleana, inteira, real etc.
+
+    Resultados
+    ----------
+        variavel : dicionário com a(s) variável(is) passada(s) para a função.
+
+    Uso
+    ---
+        import scanplot
+        
+        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
+
+        tmp = scanplot.dummy(teste=teste)
+    """
+
+    return kwargs    

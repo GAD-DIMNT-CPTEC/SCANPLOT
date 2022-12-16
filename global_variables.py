@@ -25,3 +25,6 @@ saveFig = False
 lineStyles = None
 save = False
 hvplot = False
+avaltype = None
+scanconf = False
+returnpath = False

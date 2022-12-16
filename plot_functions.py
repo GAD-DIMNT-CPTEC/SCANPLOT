@@ -972,6 +972,12 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
     else:
         hvplot = gvars.hvplot
 
+    if 'avaltype' in kwargs:
+        avaltype = kwargs['avaltype']
+    else:
+        avaltype = gvars.avaltype
+
+
     # Opção combine=True    
     if combine and hvplot:
     
@@ -991,7 +997,7 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
 
         def display_field(filename, variable, time):
             tmp = dSet[filename][variable].isel(time=time).load()
-            return tmp.hvplot.contourf(colorbar=True, coastline=True, global_extent=True, frame_height=250, 
+            return tmp.hvplot.contourf(colorbar=True, coastline=True, global_extent=True, frame_height=450, 
                                        crs=ccrs.PlateCarree(), projection=ccrs.PlateCarree(), levels=10)
         
         filenames = list(dSet.keys())
@@ -1008,11 +1014,12 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
             
         obj = SDDisplay()
         
-        title = "### Distribuição Espacial das Estatísticas\nAjuste os parâmetros abaixo para mostrar o gráfico."
+        title = "## Distribuição Espacial das Estatísticas\nAjuste os parâmetros abaixo para mostrar o gráfico."
 
         SDDisplay(name='SDDisplay', filename=filenames[0], variable=variables[0], time=0)
 
-        return pn.Column(title, pn.Row(obj.param, obj.view))
+        return pn.Column(avaltype, title, pn.Row(obj.param, obj.view))
+        #return pn.Column(title, pn.Row(obj.param, obj.view))
 
     elif combine and not hvplot:
 
