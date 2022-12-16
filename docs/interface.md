@@ -21,7 +21,9 @@ Há duas formas de carregar a interface gráfica do SCANPLOT:
         import scanplot as sc
         sc.show_interface()
         ```
-    
+
+Pelo Jupyter notebook, a docstring da função `show_interface` pode ser acessada através dos comandos `help(sc.show_interface)` ou `print(sc.show_interface.__doc__)`.
+ 
 Note que através do terminal, é necessário ativar o ambiente `SCANPLOT` antes de executar a interface gráfica. Em ambos os casos, a interface gráfica será executada no navegador da máquina. As figuras a seguir apresentam os principais aspectos da interface gráfica:
 
 ![Interface SCANPLOT - Configurações do SCANTEC](./imgs/sc1.png)
