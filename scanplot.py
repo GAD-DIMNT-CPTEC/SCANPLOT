@@ -37,4 +37,4 @@ from core_scanplot import read_namelists, dummy
 from data_structures import get_dataframe, get_dataset
 from aux_functions import concat_tables_and_loc, df_fill_nan, calc_tStudent, isnotebook 
 from plot_functions import plot_lines, plot_lines_tStudent, plot_scorecard, plot_dTaylor, plot_fields 
-from gui_functions import show_app
+from gui_functions import show_interface

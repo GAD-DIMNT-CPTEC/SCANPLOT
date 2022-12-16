@@ -34,7 +34,7 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 import scanplot as sc
 
-def show_app():
+def show_interface():
 
     class SCANPLOT(param.Parameterized):  
       
