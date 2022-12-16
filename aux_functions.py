@@ -1,7 +1,20 @@
 #! /usr/bin/env python3
 
 # SCANPLOT - Um sistema de plotagem simples para o SCANTEC
-# CC-BY-NC-SA-4.0 2022 INPE
+# Copyright (C) 2020 INPE
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
 import pandas as pd
@@ -10,6 +23,18 @@ import skill_metrics as sm
 
 from scipy.stats import t
 from scipy.stats import ttest_ind
+
+# Função proveniente de https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
+def isnotebook(shell):
+    try:
+        if shell == 'ZMQInteractiveShell':
+            return True # Jupyter notebook or qtconsole
+        elif shell == 'TerminalInteractiveShell':
+            return False # Terminal running IPython
+        else:
+            return False # Other type (?)
+    except NameError:
+        return False # Probably standard Python interpreter
 
 def concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,Var,series):
 
