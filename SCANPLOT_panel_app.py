@@ -173,9 +173,13 @@ class SCANPLOT(param.Parameterized):
         #Vars = list(data_vars.values)
         Vars = data_vars.values
 
-        Stats = ['MEAN', 'RMSE', 'VIES']
-        Exps = ['X666'] 
-        outDir = './test/SCANTEC.2.0.0b2_test_aval_oper/dataout'
+        Stats = ['MEAN', 'RMSE', 'VIES', 'ACOR']
+        #Stats = ['RMSE', 'VIES']
+        #Exps = ['X666'] 
+        Exps = list(data_conf['Experiments'].keys())
+        #outDir = './test/SCANTEC.2.0.0b2_test_aval_oper/dataout'
+        #outDir = './test/SCANTEC.TESTS/dataout'
+        outDir = str(self.open_file) + '/dataout'
         figDir = outDir + '/figs'
         
         self.dataframe = sc.get_dataframe(dataInicial, dataFinal, Stats, 
@@ -211,8 +215,7 @@ class SCANPLOT(param.Parameterized):
             
 #            layout_show_dataframe = pn.Column(self.dataframe_sel, show_dataframe)                 
 
-            file = pn.widgets.Select(value=self.dataframe_names[0], options=[i for i in list(self.dataframe_names)],
-                        name='Files')
+            file = pn.widgets.Select(value=self.dataframe_names[0], options=[i for i in list(self.dataframe_names)], name='Files')
 
 #            var = pn.widgets.Select(value=self.dataframe[file.value].columns.values[1], 
 #                                    options=[i for i in list(self.dataframe[file.value].columns.values[1:])],

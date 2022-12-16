@@ -111,7 +111,8 @@ def read_namelists(basepath,**kwargs):
     Exps = {}
     
     def key_value_exps(lexps):
-      for i in range(2, len(lexps)): # 2: desconsidera as linhas "Experiments:" e "#ModelId Name Diretory File_Name_with_mask"
+      #for i in range(2, len(lexps)): # 2: desconsidera as linhas "Experiments:" e "#ModelId Name Diretory File_Name_with_mask"
+      for i in range(1, len(lexps)): # 2: desconsidera as linhas "Experiments:" e "#ModelId Name Diretory File_Name_with_mask"
         slexps = lexps[i].split()
         Exps[slexps[1]] = [slexps[0], slexps[2]]
         Confs['Experiments'] = Exps
