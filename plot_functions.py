@@ -633,7 +633,10 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
         elif Tstat == "fc":
             # Mudança fracional
             score_table = (1.0 - (p_table2[1:].T / p_table1[1:].T))
- 
+
+        # Tentativa de substituir os NaN - que aparecem quando vies e rmse são iguais a zero
+        score_table = score_table.fillna(0.0000001)
+
         # Figura
         plt.figure(figsize = (15,10))
         
