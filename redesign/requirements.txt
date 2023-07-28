@@ -1,0 +1,31 @@
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: linux-64
+aiohttp==3.8.1
+bokeh==3.1.1
+cfgrib==0.9.10.4
+dask==2022.2.1
+datashader==0.15.1
+fsspec==2023.6.0
+geopandas==0.13.2
+geoviews==1.10.0
+holoviews==1.16.2
+hvplot==0.8.4
+intake==0.7.0
+intake-xarray==0.7.0
+jupyter==1.0.0
+markdown==3.4.3
+matplotlib==3.7.1
+metpy==1.5.1
+nbconvert==6.5.4
+numpy==1.23.5
+pandas==1.5.2
+panel==1.2.0
+param==1.13.0
+requests==2.31.0
+scipy==1.10.1
+seaborn==0.12.2
+tornado==6.1
+xarray==2022.11.0
+xgrads==0.2.3
+zarr==2.15.0

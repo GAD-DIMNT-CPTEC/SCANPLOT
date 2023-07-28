@@ -2,6 +2,7 @@
 # coding: utf-8
 
 # Usar o ambiente SCANPLOT_PANEL
+# @cfbastarz, Jun/2023 (carlos.bastarz@inpe.br)
 
 import os
 import io
@@ -53,14 +54,14 @@ Vars = [
 ('TEMP:070', 'Absolute Temperature @ 70 hPa [K]'),
 ('TEMP:050', 'Absolute Temperature @ 50 hPa [K]'),
 ('PSNM:000', 'Mean Sea Level Pressure [hPa]'),
-('UMES:925', 'Specific Humidity @ 925 hPa [Kg/Kg]'),
-('UMES:850', 'Specific Humidity @ 850 hPa [Kg/Kg]'),
-('UMES:500', 'Specific Humidity @ 500 hPa [Kg/Kg]'),
-('UMES:250', 'Specific Humidity @ 250 hPa [Kg/Kg]'),
-('UMES:200', 'Specific Humidity @ 200 hPa [Kg/Kg]'),
-('UMES:150', 'Specific Humidity @ 150 hPa [Kg/Kg]'),
-('UMES:070', 'Specific Humidity @ 70 hPa [Kg/Kg]'),
-('UMES:050', 'Specific Humidity @ 50 hPa [Kg/Kg]'),
+('UMES:925', 'Specific Humidity @ 925 hPa [g/Kg]'),
+('UMES:850', 'Specific Humidity @ 850 hPa [g/Kg]'),
+('UMES:500', 'Specific Humidity @ 500 hPa [g/Kg]'),
+('UMES:250', 'Specific Humidity @ 250 hPa [g/Kg]'),
+('UMES:200', 'Specific Humidity @ 200 hPa [g/Kg]'),
+('UMES:150', 'Specific Humidity @ 150 hPa [g/Kg]'),
+('UMES:070', 'Specific Humidity @ 70 hPa [g/Kg]'),
+('UMES:050', 'Specific Humidity @ 50 hPa [g/Kg]'),
 ('AGPL:000', 'Inst. Precipitable Water @ 1000 hPa [Kg/m2]'),
 ('ZGEO:850', 'Geopotential height @ 850 hPa [gpm]'),
 ('ZGEO:500', 'Geopotential height @ 500 hPa [gpm]'),
