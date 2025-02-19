@@ -204,8 +204,11 @@ def readCatalog(event):
 
         # Widgets Série Temporal (_st)
         varlev_st.options = [i[0] for i in Vars]
+        varlev_st.value = [i[0] for i in Vars][0] #
         reg_st.options = [*set(Regs)]
+        reg_st.value = [*set(Regs)][0] #
         ref_st.options = [*set(Refs)]
+        ref_st.value = [*set(Refs)][0] #
         expt_st.options = [*set(Exps)]
         expt_st.value = [[*set(Exps)][0]]
         
@@ -213,9 +216,13 @@ def readCatalog(event):
 
         # Widgets Scorecard (_sc)
         statt_sc.options = [*set(StatsT)]
+        statt_sc.value = [*set(StatsT)][0] #
         tstat.options = [*set(Tstats)]
+        tstat.value = [*set(Tstats)][0] #
         reg_sc.options = [*set(Regs)]
+        reg_sc.value = [*set(Regs)][0] #
         ref_sc.options = [*set(Refs)]
+        ref_sc.value = [*set(Refs)][0] #
         expt1.options = [*set(Exps)]
         expt1.value = [*set(Exps)][0]
         expt2.options = [*set(Exps)]
@@ -226,9 +233,13 @@ def readCatalog(event):
 
         # Widgets Distribuição Espacial (_de) 
         state.options = [*set(StatsE)]
+        state.value = [*set(StatsE)][0] #
         varlev_de.options = [i[0] for i in Vars]
+        varlev_de.value = [i[0] for i in Vars][0] #
         reg_de.options = [*set(Regs)]
+        reg_de.value = [*set(Regs)][0] #
         ref_de.options = [*set(Refs)]
+        ref_de.value = [*set(Refs)][0] #
         expe_de.options = [*set(Exps)]
         expe_de.value = [[*set(Exps)][0]]
         
@@ -237,8 +248,11 @@ def readCatalog(event):
       
         # Widgets Distribuição Espacial Double (_ded) 
         varlev_ded.options = [i[0] for i in Vars]
+        varlev_ded.value = [i[0] for i in Vars][0] #
         reg_ded.options = [*set(Regs)]
+        reg_ded.value = [*set(Regs)][0] #
         ref_ded.options = [*set(Refs)]
+        ref_ded.value = [*set(Refs)][0] #
         expe_ded.options = [*set(Exps)]
         expe_ded.value = [[*set(Exps)][0]]
         exp1_ded.options = [*set(Exps)]
@@ -1112,6 +1126,7 @@ float_panel = pn.layout.FloatPanel(
     contained=False, 
     position='center', 
     margin=20, 
+    height=190,
     config=config1)
 
 ## Barra de ferramentas do editor de textos
@@ -1132,19 +1147,31 @@ toolbar=[
 ]
 
 ## Widget do editor de textos
-editor = pn.widgets.TextEditor(placeholder='Digitar texto...', 
+editor = pn.widgets.TextEditor(#mode='bubble',
+                               placeholder='Digitar texto...', 
                                #mode='bubble',
                                toolbar=toolbar, 
-                               #margin=(0, 0, 10, 0), 
-                               #height=50, 
+                               margin=(0, 10, 0, 0), 
+                               height=300, 
                                #width=50,
                               )
 
+## Função para salvar o texto em um arquivo
+def save_text(event):
+    with open("scanplot_text.txt", "w", encoding="utf-8") as f:
+        f.write(editor.value)
+    editor_save_btn_status.value = "Texto salvo com sucesso!"
+
 ## Botão salvar do editor de textos
-editor_save_btn = pn.widgets.Button(name='💾 Salvar', button_type='success')
+editor_save_btn = pn.widgets.Button(name='💾 Salvar', button_type='primary')
+
+editor_save_btn.on_click(save_text)
+
+# Indicador de status
+editor_save_btn_status = pn.pane.Markdown("")
 
 ## Painel flutuante do editor de textos
-text_editor = pn.layout.FloatPanel(pn.Column(editor, pn.Column(editor_save_btn, width=200)),# sizing_mode='stretch_width'),
+text_editor = pn.layout.FloatPanel(pn.Column(editor, pn.Column(editor_save_btn, width=200), editor_save_btn_status),# sizing_mode='stretch_width'),
                                    name='SCANPLOT - Editor de Texto', 
                                    contained=False, 
                                    position='center', 
