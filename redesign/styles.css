@@ -1,0 +1,7 @@
+.botao-imagem {
+    background-image: url('/home/carlos/Pictures/scanplot.png');
+    background-size: cover;
+    border: none;
+    cursor: pointer;
+}
+

@@ -1,0 +1,20 @@
+[Desktop Entry]
+Categories=Utility;Application;
+Comment[en_US]=Aplicação Electron do SCANPLOT - Um Sistema de Plotagem Simples para o SCANTEC (V2.0.0a1)
+Comment=Aplicação Electron do SCANPLOT - Um Sistema de Plotagem Simples para o SCANTEC (V2.0.0a1)
+Exec=/bin/bash -c '/home/carlos/GitHub/SCANPLOT/redesign/scanplot.sh > /tmp/scanplot.log 2>&1'
+GenericName[en_US]=
+GenericName=
+Icon=/home/carlos/Pictures/scanplot.png
+MimeType=
+Name[en_US]=SCANPLOT
+Name=SCANPLOT
+NoDisplay=false
+Path=
+PrefersNonDefaultGPU=false
+StartupNotify=true
+Terminal=false
+TerminalOptions=\s--noclose
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

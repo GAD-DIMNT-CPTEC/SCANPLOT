@@ -1,0 +1,12 @@
+{
+  "name": "scanplot",
+  "version": "2.0.0a1",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^26.0.0"
+  }
+}
+

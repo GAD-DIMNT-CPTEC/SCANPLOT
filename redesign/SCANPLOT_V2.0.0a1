@@ -8,6 +8,7 @@ import os
 import io
 import intake
 import requests
+import yaml
 import xarray as xr
 import numpy as np
 import pandas as pd
@@ -22,7 +23,7 @@ import holoviews as hvs
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from matplotlib import pyplot as plt
 
 hvs.extension('bokeh')
@@ -35,7 +36,6 @@ pn.extension(sizing_mode='stretch_width')
 
 # SCANPLOT_V2.0.0a1
 # @cfbastarz, Jun/2023 (carlos.bastarz@inpe.br)
-
 
 Vars = [
 ('VTMP:925', 'Virtual Temperature @ 925 hPa [K]'),
@@ -106,10 +106,7 @@ colormaps = ['Accent',  'Blues',  'BrBG',  'BuGn',  'BuPu',  'CMRmap',  'Dark2',
 #
 
 # Widgets Datas (das distribuições espaciais)
-datei = datetime.strptime('2019-11-15', '%Y-%m-%d')
-datef = datetime.strptime('2019-11-26', '%Y-%m-%d')
-
-date = pn.widgets.DateSlider(name='Data', start=datei, end=datef, value=datei, format='%Y-%m-%d')
+date = pn.widgets.DateSlider(name='Data', value=datetime(1970, 1, 1), start=datetime(1970, 1, 1), end=datetime(1970, 1, 2),format='%Y-%m-%d', disabled=True)
 #fcts = pn.widgets.IntSlider(name='Previsão (horas)', start=0, end=264, step=24, value=0)
        
 # Widget de Notificações
@@ -119,15 +116,15 @@ read_catalog = pn.widgets.Button(name='🎲 Ler Catálogo de Dados', button_type
 file_input = pn.widgets.FileInput(name='Escolher Catálogo de Dados', accept='yml', mime_type='text/yml', multiple=False)
 
 # Widgets Série Temporal (_st)    
-varlev_st = pn.widgets.Select(name='Variável', disabled=True)
+varlev_st = pn.widgets.Select(name='Variável e Nível', disabled=True)
 reg_st = pn.widgets.Select(name='Região', disabled=True)
 ref_st = pn.widgets.Select(name='Referência', disabled=True)
 expt_st = pn.widgets.MultiChoice(name='Experimentos', disabled=True, solid=False)
 
 # Widgets Scorecard (_sc)
 Tstats = ['Ganho Percentual', 'Mudança Fracional']
-colormap_sc = pn.widgets.Select(name='Cor do Preenchimento', value=colormaps[74], options=colormaps)
-invert_colors_sc = pn.widgets.Checkbox(name='Inverter Cores', value=True)
+colormap_sc = pn.widgets.Select(name='Cor do Preenchimento', value=colormaps[74], options=colormaps, disabled=True)
+invert_colors_sc = pn.widgets.Checkbox(name='Inverter Cores', value=True, disabled=True)
 
 statt_sc = pn.widgets.Select(name='Estatística', disabled=True)
 tstat = pn.widgets.Select(name='Tipo', disabled=True)
@@ -138,25 +135,28 @@ expt2 = pn.widgets.Select(name='Experimento 2', disabled=True)
 
 # Widgets Distribuição Espacial (_de) 
 Fills = ['image', 'contour']
-fill_de = pn.widgets.Select(name='Preenchimento', options=Fills)     
-colormap_de = pn.widgets.Select(name='Cor do Preenchimento', value=colormaps[0], options=colormaps)      
-invert_colors_de = pn.widgets.Checkbox(name='Inverter Cores', value=True) 
-interval = pn.widgets.IntInput(name='Intervalos', value=10, step=1, start=5, end=20)     
+fill_de = pn.widgets.Select(name='Preenchimento', options=Fills, disabled=True)     
+colormap_de = pn.widgets.Select(name='Cor do Preenchimento', value=colormaps[0], options=colormaps,  disabled=True)      
+invert_colors_de = pn.widgets.Checkbox(name='Inverter Cores', value=True,  disabled=True) 
+#interval = pn.widgets.IntInput(name='Intervalos', value=10, step=1, start=5, end=20, disabled=True)   
+interval = pn.widgets.IntInput(name='Intervalos', disabled=False)#, visible=False)     
     
 state = pn.widgets.Select(name='Estatística', disabled=True)    
-varlev_de = pn.widgets.Select(name='Variável', disabled=True)    
+varlev_de = pn.widgets.Select(name='Variável e Nível', disabled=True)    
 reg_de = pn.widgets.Select(name='Região', disabled=True)    
 ref_de = pn.widgets.Select(name='Referência', disabled=True)       
 expe_de = pn.widgets.MultiChoice(name='Experimentos', disabled=True, solid=False)    
       
 # Widgets Distribuição Espacial Double (_ded) 
-fill_ded = pn.widgets.Select(name='Preenchimento', value=Fills[0], options=Fills) 
-colormap_ded = pn.widgets.Select(name='Cor do Preenchimento', value=colormaps[80], options=colormaps)      
-invert_colors_ded = pn.widgets.Checkbox(name='Inverter Cores', value=True) 
-swipe_ded = pn.widgets.Checkbox(name='Juntar Figuras', value=False) 
-show_diff_ded = pn.widgets.Checkbox(name='Mostrar Diferença', value=False) 
+#fill_ded = pn.widgets.Select(name='Preenchimento', value=Fills[0], options=Fills, disabled=True) 
+fill_ded = pn.widgets.Select(name='Preenchimento', options=Fills, disabled=True)    
+colormap_ded = pn.widgets.Select(name='Cor do Preenchimento', value=colormaps[80], options=colormaps, disabled=True)      
+invert_colors_ded = pn.widgets.Checkbox(name='Inverter Cores', value=True, disabled=True) 
+swipe_ded = pn.widgets.Checkbox(name='Juntar Figuras', value=False, disabled=True) 
+show_diff_ded = pn.widgets.Checkbox(name='Mostrar Diferença', value=False, disabled=True) 
+#interval_ded = pn.widgets.IntInput(name='Intervalos', disabled=True) 
 
-varlev_ded = pn.widgets.Select(name='Variável', disabled=True)    
+varlev_ded = pn.widgets.Select(name='Variável e Nível', disabled=True)    
 reg_ded = pn.widgets.Select(name='Região', disabled=True)    
 ref_ded = pn.widgets.Select(name='Referência', disabled=True)    
 expe_ded = pn.widgets.MultiChoice(name='Experimentos', disabled=True, solid=False)  
@@ -177,9 +177,26 @@ def readCatalog(event):
     
     try:
         
+        # Abre o arquivo de catálogo para leitura das fontes de dados (utiliza o intake)
         data_catalog = intake.open_catalog(os.path.join(os.getcwd(), 'catalog.yml'))
 
-        if silence.value is False: pn.state.notifications.success('Arquivo catalog.yml carregado com sucesso!', duration=5000)
+        # Abre novamente o arquivo de catálogo para obter os metadados referente às datas (utiliza o yaml, não é o ideal - mas por hora é o que faremos aqui...)
+        with open('catalog.yml', 'r') as file:
+            data_catalog_dates = yaml.safe_load(file)
+        file.close()
+
+        first_record = list(data_catalog_dates)[0]
+        tmp = data_catalog_dates[first_record]
+
+        date.start = datetime.strptime(str(data_catalog_dates['sources'][list(tmp)[0]]['metadata']['date_initial'][0]), '%Y%m%d%H')
+        fctd = data_catalog_dates['sources'][list(tmp)[0]]['metadata']['forecast_days'][0]
+        date_final = date.start + timedelta(days=int(fctd))
+        date.end = date_final
+        date.value = datetime.strptime(str(data_catalog_dates['sources'][list(tmp)[0]]['metadata']['date_initial'][0]), '%Y%m%d%H')
+        
+        date.disabled = False
+
+        if silence.value is False: pn.state.notifications.success('Catálogo carregado com sucesso!', duration=5000)
         
         loaded.value = True
         
@@ -203,69 +220,111 @@ def readCatalog(event):
             Types.append(attrs[5])
 
         # Widgets Série Temporal (_st)
-        varlev_st.options = [i[0] for i in Vars]
-        varlev_st.value = [i[0] for i in Vars][0] #
-        reg_st.options = [*set(Regs)]
-        reg_st.value = [*set(Regs)][0] #
-        ref_st.options = [*set(Refs)]
-        ref_st.value = [*set(Refs)][0] #
-        expt_st.options = [*set(Exps)]
-        expt_st.value = [[*set(Exps)][0]]
+        if Vars and 'table' in Types:
+            varlev_st.options = [i[0] for i in Vars]
+            varlev_st.value = [i[0] for i in Vars][0] #
+        if Regs and 'table' in Types:
+            reg_st.options = [*set(Regs)]
+            reg_st.value = [*set(Regs)][0] #
+        if Refs and 'table' in Types:
+            ref_st.options = [*set(Refs)]
+            ref_st.value = [*set(Refs)][0] #
+        if Exps and 'table' in Types:
+            expt_st.options = [*set(Exps)]
+            expt_st.value = [[*set(Exps)][0]]
         
         varlev_st.disabled = reg_st.disabled = ref_st.disabled = expt_st.disabled = False
 
         # Widgets Scorecard (_sc)
-        statt_sc.options = [*set(StatsT)]
-        statt_sc.value = [*set(StatsT)][0] #
-        tstat.options = [*set(Tstats)]
-        tstat.value = [*set(Tstats)][0] #
-        reg_sc.options = [*set(Regs)]
-        reg_sc.value = [*set(Regs)][0] #
-        ref_sc.options = [*set(Refs)]
-        ref_sc.value = [*set(Refs)][0] #
-        expt1.options = [*set(Exps)]
-        expt1.value = [*set(Exps)][0]
-        expt2.options = [*set(Exps)]
-        expt2.value = [*set(Exps)][1]
-        
-        colormap_sc.disabled = invert_colors_sc.disabled = statt_sc.disabled = tstat.disabled = False
-        reg_sc.disabled = ref_sc.disabled = expt1.disabled = expt2.disabled = False
+        if StatsT and 'table' in Types:
+            statt_sc.options = [*set(StatsT)]
+            statt_sc.value = [*set(StatsT)][0] #
+        if Tstats and 'table' in Types:
+            tstat.options = [*set(Tstats)]
+            tstat.value = [*set(Tstats)][0] #
+        if Regs and 'table' in Types:
+            reg_sc.options = [*set(Regs)]
+            reg_sc.value = [*set(Regs)][0] #
+        if Refs and 'table' in Types:
+            ref_sc.options = [*set(Refs)]
+            ref_sc.value = [*set(Refs)][0] #
+        if Exps and 'table' in Types:
+            expt1.options = [*set(Exps)]
+            expt1.value = [*set(Exps)][0]
+        if Exps and 'table' in Types:
+            expt2.options = [*set(Exps)]
+            #expt2.value = [*set(Exps)][1]
+            expt2.value = [*set(Exps)][0]
+        invert_colors_sc.value = True
 
+        statt_sc.disabled = tstat.disabled = reg_sc.disabled = ref_sc.disabled = False
+        expt1.disabled = expt2.disabled = False       
+        colormap_sc.disabled = invert_colors_sc.disabled = False
+    
         # Widgets Distribuição Espacial (_de) 
-        state.options = [*set(StatsE)]
-        state.value = [*set(StatsE)][0] #
-        varlev_de.options = [i[0] for i in Vars]
-        varlev_de.value = [i[0] for i in Vars][0] #
-        reg_de.options = [*set(Regs)]
-        reg_de.value = [*set(Regs)][0] #
-        ref_de.options = [*set(Refs)]
-        ref_de.value = [*set(Refs)][0] #
-        expe_de.options = [*set(Exps)]
-        expe_de.value = [[*set(Exps)][0]]
-        
-        fill_de.disabled = state.disabled = varlev_de.disabled = reg_de.disabled = ref_de.disabled = False    
-        colormap_de.disabled = invert_colors_de.disabled = interval.disabled = expe_de.disabled = False
-      
+        if StatsE and 'field' in Types:
+            state.options = [*set(StatsE)]
+            state.value = [*set(StatsE)][0] #
+        if Vars and 'field' in Types:
+            varlev_de.options = [i[0] for i in Vars]
+            varlev_de.value = [i[0] for i in Vars][0] #
+        if Regs and 'field' in Types:
+            reg_de.options = [*set(Regs)]
+            reg_de.value = [*set(Regs)][0] #
+        if Refs and 'field' in Types:
+            ref_de.options = [*set(Refs)]
+            ref_de.value = [*set(Refs)][0] #
+        if Exps and 'field' in Types:
+            expe_de.options = [*set(Exps)]
+            expe_de.value = [[*set(Exps)][0]]
+        fill_de.value = Fills[0]
+        fill_de.options = Fills         
+
+        state.disabled = varlev_de.disabled = reg_de.disabled = ref_de.disabled = expe_de.disabled = False
+        fill_de.disabled = colormap_de.disabled = invert_colors_de.disabled = False
+
         # Widgets Distribuição Espacial Double (_ded) 
-        varlev_ded.options = [i[0] for i in Vars]
-        varlev_ded.value = [i[0] for i in Vars][0] #
-        reg_ded.options = [*set(Regs)]
-        reg_ded.value = [*set(Regs)][0] #
-        ref_ded.options = [*set(Refs)]
-        ref_ded.value = [*set(Refs)][0] #
-        expe_ded.options = [*set(Exps)]
-        expe_ded.value = [[*set(Exps)][0]]
-        exp1_ded.options = [*set(Exps)]
-        exp1_ded.value = [*set(Exps)][0]
-        exp2_ded.options = [*set(Exps)]
-        exp2_ded.value = [*set(Exps)][1]
-        
-        fill_ded.disabled = varlev_ded.disabled = reg_ded.disabled = ref_ded.disabled = colormap_ded.disabled = False      
-        invert_colors_ded.disabled = expe_ded.disabled = swipe_ded.disabled = show_diff_ded.disabled = exp1_ded.disabled = False
-        exp2_ded.disabled = False      
-        
+        if Vars and 'field' in Types:
+            varlev_ded.options = [i[0] for i in Vars]
+            varlev_ded.value = [i[0] for i in Vars][0] #
+        if Regs and 'field' in Types:
+            reg_ded.options = [*set(Regs)]
+            reg_ded.value = [*set(Regs)][0] #
+        if Refs and 'field' in Types:
+            ref_ded.options = [*set(Refs)]
+            ref_ded.value = [*set(Refs)][0] #
+        if Exps and 'field' in Types:
+            expe_ded.options = [*set(Exps)]
+            expe_ded.value = [[*set(Exps)][0]]
+        if Exps and 'field' in Types:
+            exp1_ded.options = [*set(Exps)]
+            exp1_ded.value = [*set(Exps)][0]
+        if Exps and 'field' in Types:
+            exp2_ded.options = [*set(Exps)]
+            #exp2_ded.value = [*set(Exps)][1]
+            exp2_ded.value = [*set(Exps)][0]
+        fill_ded.value = Fills[0]
+        fill_ded.options = Fills    
+       
+        interval.value = 10
+        interval.step = 1
+        interval.start = 5
+        interval.end = 20      
+
+        #print(fill_de.value, fill_ded.value)
+
+        #if fill_de.value == 'contour' or fill_ded.value == 'contour':
+        #    interval.disabled = False
+        #    #interval.visible = True
+        #else:
+        #    interval.disabled = True
+        #    #interval.visible = False
+
+        varlev_ded.disabled = reg_ded.disabled = ref_ded.disabled = expe_ded.disabled = exp1_ded.disabled = exp2_ded.disabled = False      
+        invert_colors_ded.disabled = swipe_ded.disabled = show_diff_ded.disabled = fill_ded.disabled = colormap_ded.disabled = False 
+
         read_catalog.visible = False
-        
+  
     except IOError:
         
         if silence.value is False: pn.state.notifications.error('Arquivo ' + fname + ' não existe!', duration=5000) 
@@ -297,9 +356,16 @@ def get_min_max_ds(ds):
 def get_df(reg, exp, stat, ref, varlev):
     kname = 'scantec-' + reg + '-' + stat + '-' + exp.lower() + '-' + ref + '-table'
     if data_catalog is not None:
-        df = data_catalog[kname].read()
-        df.set_index('Unnamed: 0', inplace=True)
-        df.index.name = '' 
+        # Verifica se a fonte de dados existe no catálogo
+        if kname in data_catalog:
+            df = data_catalog[kname].read()
+            df.set_index('Unnamed: 0', inplace=True)
+            df.index.name = '' 
+        else:
+            # Se a fonte de dados não existir, retorna um dataframe vazio
+            df = pd.DataFrame(columns=['%Previsao', varlev])
+            #df.set_index('Unnamed: 0', inplace=True)
+            df.index.name = '' 
         return df
 
 @pn.depends(varlev_st, reg_st, ref_st, expt_st, loaded)
@@ -446,7 +512,7 @@ def plotCurves(varlev_st, reg_st, ref_st, expt_st, loaded):
 @pn.depends(statt_sc, tstat, reg_sc, ref_sc, expt1, expt2, colormap_sc, invert_colors_sc, loaded)    
 def plotScorecard(statt_sc, tstat, reg_sc, ref_sc, expt1, expt2, colormap_sc, invert_colors_sc, loaded):
     
-    if loaded and statt_sc and tstat and reg_sc and ref_sc and expt1 and expt2 and colormap_sc and invert_colors_sc:   
+    if loaded and statt_sc and tstat and reg_sc and ref_sc and expt1 and expt2 and colormap_sc:# and invert_colors_sc:   
     
         dfs = globals()['data_catalog']
     
@@ -469,7 +535,7 @@ def plotScorecard(statt_sc, tstat, reg_sc, ref_sc, expt1, expt2, colormap_sc, in
             cmap = colormap_sc + '_r'
         else:
             cmap = colormap_sc
-    
+
         if tstat == 'Ganho Percentual':
             # Porcentagem de ganho
             if statt_sc == 'ACOR':
@@ -484,8 +550,6 @@ def plotScorecard(statt_sc, tstat, reg_sc, ref_sc, expt1, expt2, colormap_sc, in
             score_table = (1.0 - (p_table2.T / p_table1.T))
  
         if score_table.isnull().values.any():
-
-            #print(score_table)
 
             # Tentativa de substituir os NaN - que aparecem quando vies e rmse são iguais a zero
             score_table = score_table.fillna(0.0000001)
@@ -552,7 +616,7 @@ def plotScorecard(statt_sc, tstat, reg_sc, ref_sc, expt1, expt2, colormap_sc, in
                     pn.pane.Markdown("""
                     # Scorecard
                     
-                    Para uma variável alpha (e.g., pressão, temperatura, umidade, componentes do vento etc.), podem ser calculadas duas métricas que permitem quantificar a variação relativa entre dois experimentos avaliados pelo SCANTEC. As métricas aplicadas são o Ganho Percentual e a Mudança Fracional* e ambas podem ser calculadas com base nas tabelas de estatisticas do SCANTEC. Estas métricas podem ser utilizadas quando se quiser ter uma visão imediata sobre as melhorias obtidas entre duas versões de um modelo ou entre dois experimentos de um mesmo modelo.
+                    Para uma variável alpha (e.g., pressão, temperatura, umidade, componentes do vento etc.), podem ser calculadas duas métricas que permitem quantificar a variação relativa entre dois experimentos avaliados pelo SCANTEC. As métricas aplicadas são o Ganho Percentual e a Mudança Fracional e ambas podem ser calculadas com base nas tabelas de estatisticas do SCANTEC. Estas métricas podem ser utilizadas quando se quiser ter uma visão imediata sobre as melhorias obtidas entre duas versões de um modelo ou entre dois experimentos de um mesmo modelo.
                     """),
                     pn.pane.Alert('⛔ **Atenção:** Nada para mostrar! Para começar, selecione um catálogo de dados ou aguarde a execução da função de plotagem.', alert_type='danger')
                 )        
@@ -562,44 +626,80 @@ def plotScorecard(statt_sc, tstat, reg_sc, ref_sc, expt1, expt2, colormap_sc, in
 @pn.depends(state, varlev_de, reg_de, ref_de, date, colormap_de, invert_colors_de, interval, expe_de, fill_de)
 def plotFields(state, varlev_de, reg_de, ref_de, date, colormap_de, invert_colors_de, interval, expe_de, fill_de):
     
-    date = str(date) + ' 12:00' # consertar...
+    if loaded and state and varlev_ded and reg_ded and ref_ded and date and colormap_ded and interval and fill_de and exp1_ded and exp2_ded:
 
-    var = varlev_de.replace(':', '').lower()
+        date = str(date) + ' 12:00' # consertar...
+
+        var = varlev_de.replace(':', '').lower()
+        
+        for i in Vars:
+            if i[0] == varlev_de:
+                nexp_ext = i[1]
+        
+        if invert_colors_de == True:
+            cmap = colormap_de + '_r'
+        else:
+            cmap = colormap_de
+        
+        if reg_de == 'as':
+            data_aspect=1
+            frame_height=700
+        elif (reg_de == 'hn') or (reg_de == 'hs'):
+            data_aspect=1
+            frame_height=225        
+        elif reg_de == 'tr':
+            data_aspect=1
+            frame_height=150         
+        elif reg_de == 'gl': 
+            data_aspect=1
+            frame_height=590
     
-    for i in Vars:
-        if i[0] == varlev_de:
-            nexp_ext = i[1]
-    
-    if invert_colors_de == True:
-        cmap = colormap_de + '_r'
-    else:
-        cmap = colormap_de
-    
-    if reg_de == 'as':
-        data_aspect=1
-        frame_height=700
-    elif (reg_de == 'hn') or (reg_de == 'hs'):
-        data_aspect=1
-        frame_height=225        
-    elif reg_de == 'tr':
-        data_aspect=1
-        frame_height=150         
-    elif reg_de == 'gl': 
-        data_aspect=1
-        frame_height=590
-  
-    for count, i in enumerate(expe_de):
-        if count == 0:
-            exp = expe_de[count]
-            kname = 'scantec-' + reg_de + '-' + state.lower() + '-' + exp.lower() + '-' + ref_de + '-field'
-            if data_catalog is not None:
-                ds = data_catalog[kname].to_dask()
-            
-            vmin, vmax = get_min_max_ds(ds[var])
-                       
-            if fill_de == 'image':
-            
-                ax = ds.sel(time=date).hvplot.image(x='lon',
+        for count, i in enumerate(expe_de):
+            if count == 0:
+                exp = expe_de[count]
+                kname = 'scantec-' + reg_de + '-' + state.lower() + '-' + exp.lower() + '-' + ref_de + '-field'
+                if data_catalog is not None:
+                    ds = data_catalog[kname].to_dask()
+                
+                vmin, vmax = get_min_max_ds(ds[var])
+                        
+                if fill_de == 'image':
+                
+                    #interval.disabled = True
+
+                    ax = ds.sel(time=date).hvplot.image(x='lon',
+                                                        y='lat',
+                                                        z=var,
+                                                        data_aspect=data_aspect,
+                                                        frame_height=frame_height, 
+                                                        cmap=cmap, 
+                                                        projection=ccrs.PlateCarree(), 
+                                                        coastline=True,
+                                                        rasterize=True,
+                                                        clim=(vmin,vmax),
+                                                        title=str(state) + ' - ' + str(nexp_ext) + ' (' + str(date) + ')')    
+                    
+                elif fill_de == 'contour':
+                    
+                    #interval.disabled = False
+
+                    ax = ds.sel(time=date).hvplot.contour(x='lon',
+                                                        y='lat',
+                                                        z=var,
+                                                        data_aspect=data_aspect,
+                                                        frame_height=frame_height, 
+                                                        cmap=cmap, 
+                                                        projection=ccrs.PlateCarree(), 
+                                                        coastline=True,
+                                                        rasterize=True,
+                                                        clim=(vmin,vmax),
+                                                        levels=interval,
+                                                        line_width=2,
+                                                        title=str(state) + ' - ' + str(nexp_ext) + ' (' + str(date) + ')')  
+                
+            else:  
+                
+                ax *= ds.sel(time=date).hvplot.contour(x='lon',
                                                     y='lat',
                                                     z=var,
                                                     data_aspect=data_aspect,
@@ -607,44 +707,27 @@ def plotFields(state, varlev_de, reg_de, ref_de, date, colormap_de, invert_color
                                                     cmap=cmap, 
                                                     projection=ccrs.PlateCarree(), 
                                                     coastline=True,
-                                                    rasterize=True,
                                                     clim=(vmin,vmax),
-                                                    title=str(state) + ' - ' + str(nexp_ext) + ' (' + str(date) + ')')    
-                
-            elif fill_de == 'contour':
-                
-                ax = ds.sel(time=date).hvplot.contour(x='lon',
-                                                      y='lat',
-                                                      z=var,
-                                                      data_aspect=data_aspect,
-                                                      frame_height=frame_height, 
-                                                      cmap=cmap, 
-                                                      projection=ccrs.PlateCarree(), 
-                                                      coastline=True,
-                                                      rasterize=True,
-                                                      clim=(vmin,vmax),
-                                                      levels=interval,
-                                                      line_width=2,
-                                                      title=str(state) + ' - ' + str(nexp_ext) + ' (' + str(date) + ')')  
-             
-        else:  
-            
-            ax *= ds.sel(time=date).hvplot.contour(x='lon',
-                                                   y='lat',
-                                                   z=var,
-                                                   data_aspect=data_aspect,
-                                                   frame_height=frame_height, 
-                                                   cmap=cmap, 
-                                                   projection=ccrs.PlateCarree(), 
-                                                   coastline=True,
-                                                   clim=(vmin,vmax),
-                                                   colorbar=True,
-                                                   levels=interval,
-                                                   line_width=4,
-                                                   line_dash='dashed',
-                                                   title=str(state) + ' - ' + str(nexp_ext) + ' (' + str(date) + ')') 
-   
-    return ax
+                                                    colorbar=True,
+                                                    levels=interval,
+                                                    line_width=4,
+                                                    line_dash='dashed',
+                                                    title=str(state) + ' - ' + str(nexp_ext) + ' (' + str(date) + ')') 
+
+        layout = pn.Column(ax)
+
+    else:
+
+        layout = pn.Column(
+                    pn.pane.Markdown("""
+                    # Distribuição Espacial
+                    
+                    A avaliação por meio da distribuição espacial permite verificar o comportamento de parêmetros (variáveis) do modelo ao longo do tempo, seja por meio da verificação dos erros aleatórios, sistemáticos e habilidade de previsão.
+                    """),
+                    pn.pane.Alert('⛔ **Atenção:** Nada para mostrar! Para começar, selecione um catálogo de dados ou aguarde a execução da função de plotagem.', alert_type='danger')
+                ) 
+
+    return layout
 
 @pn.depends(state, varlev_ded, reg_ded, ref_ded, date, colormap_ded, invert_colors_ded, interval, fill_ded, swipe_ded, show_diff_ded, exp1_ded, exp2_ded)
 def plotFieldsDouble(state, varlev_ded, reg_ded, ref_ded, date, colormap_ded, invert_colors_ded, interval, fill_ded, swipe_ded, show_diff_ded, exp1_ded, exp2_ded):
@@ -699,6 +782,8 @@ def plotFieldsDouble(state, varlev_ded, reg_ded, ref_ded, date, colormap_ded, in
 
             if fill_ded == 'image':
 
+                #interval.disabled = True
+
                 ax1 = ds1.sel(time=datefmt).hvplot.image(x='lon',
                                                       y='lat',
                                                       z=var,
@@ -748,6 +833,8 @@ def plotFieldsDouble(state, varlev_ded, reg_ded, ref_ded, date, colormap_ded, in
                                                                                   title=str(state) + ' - ' + 'Dif. (' + str(exp1) + '-' + str(exp2) + ') - ' + str(nexp_ext) + ' (' + str(datefmt) + ')')    
 
             elif fill_ded == 'contour':
+
+                #interval.disabled = False
 
                 ax1 = ds1.sel(time=datefmt).hvplot.contour(x='lon',
                                                         y='lat',
@@ -802,6 +889,8 @@ def plotFieldsDouble(state, varlev_ded, reg_ded, ref_ded, date, colormap_ded, in
 
             if fill_ded == 'image':
 
+                #interval.disabled = True
+
                 ax1 = ds1.sel(time=datefmt).hvplot.image(x='lon',
                                                       y='lat',
                                                       z=var,
@@ -835,6 +924,8 @@ def plotFieldsDouble(state, varlev_ded, reg_ded, ref_ded, date, colormap_ded, in
                                                       title=str(state) + ' - ' + str(exp2) + ' - ' + str(nexp_ext) + ' (' + str(datefmt) + ')')       
 
             elif fill_ded == 'contour':
+
+                #interval.disabled = False
 
                 ax1 = ds1.sel(time=datefmt).hvplot.contour(x='lon',
                                                         y='lat',
@@ -887,7 +978,7 @@ def plotFieldsDouble(state, varlev_ded, reg_ded, ref_ded, date, colormap_ded, in
         if silence.value is False: pn.state.notifications.info('As cores nos gráficos podem representar intervalos de valores diferentes.', duration=5000)
 
     else:
-        
+
         layout = pn.Column(
                     pn.pane.Markdown("""
                     # Distribuição Espacial
@@ -895,8 +986,8 @@ def plotFieldsDouble(state, varlev_ded, reg_ded, ref_ded, date, colormap_ded, in
                     A avaliação por meio da distribuição espacial permite verificar o comportamento de parêmetros (variáveis) do modelo ao longo do tempo, seja por meio da verificação dos erros aleatórios, sistemáticos e habilidade de previsão.
                     """),
                     pn.pane.Alert('⛔ **Atenção:** Nada para mostrar! Para começar, selecione um catálogo de dados ou aguarde a execução da função de plotagem.', alert_type='danger')
-                )          
-        
+                )           
+
     return layout
     
 @pn.depends(state, varlev_de, reg_de, ref_de, date, expt1)
@@ -1069,7 +1160,10 @@ Clique sobre as abas `Série Temporal`, `Scorecard` ou `Distribuição Espacial`
 Cada tipo de visualização possui opções diferentes e independentes para a realização das plotagens. Utilize as opções para fazer os ajustes necessários.
 """
 
-scanplot_video = pn.pane.Video('https://s0.cptec.inpe.br/pesquisa/das/dist/carlos.bastarz/SCANPLOT/scanplot_video.mp4', width=800, muted=True, volume=0, loop=False)
+scanplot_video = pn.pane.Video('https://s0.cptec.inpe.br/pesquisa/das/dist/carlos.bastarz/SCANPLOT/scanplot_video.mp4', width=600, muted=True, volume=0, loop=False)
+
+scanplot_imgs_fp = 'scanplot_imgs.png'
+scanplot_imgs = pn.pane.PNG(scanplot_imgs_fp, width=800)
 
 welcomeText = pn.Column("""
 # Bem-vindo!
@@ -1081,7 +1175,7 @@ o SCANTEC, devido as suas particularidades de desenvolvimento e aplicação.
 Para começar, clique no botão `Choose File` (Escolher Arquivo) na barra lateral à esquerda e selecione um catálogo com os dados de avaliação realizada pelo SCANTEC. Em seguida, clique nas abas acima para acessar os resultados.
 
 Se precisar de ajuda, clique nos botões da barra lateral à esquerda ou assista o vídeo de introdução ao uso do SCANPLOT a seguir. 
-""", scanplot_video)
+""", pn.Row(scanplot_video, scanplot_imgs))
 
 text_fu = """
 # Selecionar Catálogo
@@ -1096,7 +1190,7 @@ SCANPLOT - Um sistema de visualização simples para o SCANTEC.
 
 ---
 
-CPTEC-INPE, 2023.
+CPTEC-INPE, 2025.
 """
 
 #
@@ -1208,7 +1302,7 @@ modal_btn_ded = pn.widgets.Button(name='📊 Sobre', button_type='success')
 modal_help = pn.widgets.Button(name='🛟 Ajuda', button_type='primary')
 
 ## Cartões da barra lateral
-card_parameters_fu = pn.Card(winpt, modal_btn_fu, title='Selecionar catálogo', collapsed=False)
+card_parameters_fu = pn.Card(winpt, modal_btn_fu, title='Selecionar Catálogo', collapsed=False)
 card_parameters_st = pn.Card(wst, modal_btn_st, title='Série Temporal', collapsed=False)
 card_parameters_sc = pn.Card(wsc, modal_btn_sc, title='Scorecard', collapsed=False)
 card_parameters_ded = pn.Card(wded, modal_btn_ded, title='Distribuição Espacial', collapsed=False)
@@ -1301,7 +1395,7 @@ template.sidebar.append(modal_btn)
 template.sidebar.append(modal_help)
 template.sidebar.append(editor_btn)
 template.sidebar.append(silence)
-template.sidebar.append('##### CPTEC-INPE, 2023.')
+template.sidebar.append('##### CPTEC-INPE, 2025.')
 template.main.append(pn.Column(
     tabs,    
     float_panel, 

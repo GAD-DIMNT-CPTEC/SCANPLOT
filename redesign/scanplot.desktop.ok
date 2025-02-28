@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=SCANPLOT
+Comment=Aplicação Electron do SCANPLOT - Um Sistema de Plotagem Simples para o SCANTEC (V2.0.0a1)
+Exec=/bin/bash -c "/home/carlos/GitHub/SMNAMonitoringApp.repo/smna-monitoring.sh > /tmp/scanplot.log 2>&1"
+Icon=/home/carlos/Pictures/scanplot.png
+Terminal=false
+Type=Application
+Categories=Utility;Application;
+

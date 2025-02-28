@@ -1,0 +1,43 @@
+const { app, BrowserWindow } = require('electron');
+const { exec } = require('child_process');
+
+let win;
+
+function createWindow() {
+    win = new BrowserWindow({
+        width: 1280,
+        height: 960,
+        webPreferences: {
+            nodeIntegration: false
+        }
+    });
+
+    // Oculta a barra de menus
+    win.setMenuBarVisibility(false);
+
+    // Carrega o app Panel quando o servidor estiver disponível
+    const checkServer = setInterval(() => {
+        require('http').get('http://localhost:5006', (res) => {
+            if (res.statusCode === 200) {
+                win.loadURL('http://localhost:5006');
+                clearInterval(checkServer);
+            }
+        }).on('error', () => {
+            console.log('Aguardando Panel iniciar...');
+        });
+    }, 3000);
+}
+
+// Inicia o servidor Panel e cria a janela do Electron
+app.whenReady().then(() => {
+    exec('panel serve SCANPLOT_V2.0.0a1.py --port 5006', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Erro ao iniciar Panel: ${error.message}`);
+            return;
+        }
+        console.log('Panel iniciado:', stdout);
+    });
+
+    createWindow();
+});
+
