@@ -144,8 +144,8 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
     # Refs:
     # * https://stackoverflow.com/questions/43545050/using-matplotlib-notebook-after-matplotlib-inline-in-jupyter-notebook-doesnt
     # * https://www.codegrepper.com/code-examples/python/use+ipython+magic+in+script
-    ipython.magic("matplotlib Agg")           
-    ipython.magic("matplotlib Agg")           
+    ipython.run_line_magic("matplotlib", "Agg")           
+    ipython.run_line_magic("matplotlib", "Agg")           
     import matplotlib.pyplot as plt
 
     # Reseta os parâmetros de aspecto do Seaborn
@@ -156,11 +156,11 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
     
         if isnotebook(get_ipython().__class__.__name__): # seções iterativas
             if showFig:
-                ipython.magic('matplotlib inline')           
+                ipython.run_line_magic('matplotlib', 'inline')           
                 #mpl.rc('figure', max_open_warning = 0)
                 mpl.rcParams.update({'figure.max_open_warning': 0})
             else:
-                ipython.magic('matplotlib agg')           
+                ipython.run_line_magic('matplotlib','agg')           
         else: # seções não iterativas
             if not showFig:
                 mpl.use('agg')
@@ -242,10 +242,10 @@ def plot_lines(dTable,Vars,Stats,outDir,**kwargs):
             
         if isnotebook(get_ipython().__class__.__name__):
             if showFig:
-                ipython.magic('matplotlib inline')           
+                ipython.run_line_magic('matplotlib', 'inline')           
                 mpl.rcParams.update({'figure.max_open_warning': 0})
             else:
-                ipython.magic('matplotlib agg')           
+                ipython.run_line_magic('matplotlib', 'agg')           
         else:
             if not showFig:
                 mpl.use('agg')
@@ -421,10 +421,10 @@ def plot_lines_tStudent(dataInicial,dataFinal,dTable_series,Exps,Var,VarName,ldr
 
     if isnotebook(get_ipython().__class__.__name__):
         if showFig:
-            ipython.magic('matplotlib inline')           
+            ipython.run_line_magic('matplotlib', 'inline')           
             mpl.rcParams.update({'figure.max_open_warning': 0})
         else:
-            ipython.magic('matplotlib agg')           
+            ipython.run_line_magic('matplotlib', 'agg')           
     else:
         if not showFig:
             mpl.use('agg')
@@ -601,10 +601,10 @@ def plot_scorecard(dTable,Vars,Stats,Tstat,Exps,outDir,**kwargs):
 
     if isnotebook(get_ipython().__class__.__name__):
         if showFig:
-            ipython.magic('matplotlib inline')           
+            ipython.run_line_magic('matplotlib', 'inline')           
             mpl.rcParams.update({'figure.max_open_warning': 0})
         else:
-            ipython.magic('matplotlib agg')           
+            ipython.run_line_magic('matplotlib', 'agg')           
     else:
         if not showFig:
             mpl.use('agg')
@@ -786,10 +786,10 @@ def plot_dTaylor(dTable,data_conf,Vars,Stats,outDir,**kwargs):
 
     if isnotebook(get_ipython().__class__.__name__):
         if showFig:
-            ipython.magic('matplotlib inline')           
+            ipython.run_line_magic('matplotlib', 'inline')           
             mpl.rcParams.update({'figure.max_open_warning': 0})
         else:
-            ipython.magic('matplotlib agg')           
+            ipython.run_line_magic('matplotlib', 'agg')           
     else:
         if not showFig:
             mpl.use('agg')
@@ -990,11 +990,11 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
     
         if isnotebook(get_ipython().__class__.__name__): # seções iterativas
             if showFig:
-                ipython.magic('matplotlib inline')           
+                ipython.run_line_magic('matplotlib', 'inline')           
                 #mpl.rc('figure', max_open_warning = 0)
                 mpl.rcParams.update({'figure.max_open_warning': 0})
             else:
-                ipython.magic('matplotlib agg')           
+                ipython.run_line_magic('matplotlib', 'agg')           
         else: # seções não iterativas
             if not showFig:
                 mpl.use('agg')
@@ -1032,11 +1032,11 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
 
         if isnotebook(get_ipython().__class__.__name__): # seções iterativas
             if showFig:
-                ipython.magic('matplotlib inline')           
+                ipython.run_line_magic('matplotlib', 'inline')           
                 #mpl.rc('figure', max_open_warning = 0)
                 mpl.rcParams.update({'figure.max_open_warning': 0})
             else:
-                ipython.magic('matplotlib agg')           
+                ipython.run_line_magic('matplotlib', 'agg')           
         else: # seções não iterativas
             if not showFig:
                 mpl.use('agg')
@@ -1048,11 +1048,11 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
 
         if isnotebook(get_ipython().__class__.__name__): # seções iterativas
             if showFig:
-                ipython.magic('matplotlib inline')           
+                ipython.run_line_magic('matplotlib', 'inline')           
                 #mpl.rc('figure', max_open_warning = 0)
                 mpl.rcParams.update({'figure.max_open_warning': 0})
             else:
-                ipython.magic('matplotlib agg')           
+                ipython.run_line_magic('matplotlib', 'agg')           
         else: # seções não iterativas
             if not showFig:
                 mpl.use('agg')
@@ -1092,10 +1092,10 @@ def plot_fields(dSet,Vars,Stats,outDir,**kwargs):
             
         if isnotebook(get_ipython().__class__.__name__):
             if showFig:
-                ipython.magic('matplotlib inline')           
+                ipython.run_line_magic('matplotlib', 'inline')           
                 mpl.rcParams.update({'figure.max_open_warning': 0})
             else:
-                ipython.magic('matplotlib agg')           
+                ipython.run_line_magic('matplotlib', 'agg')           
         else:
             if not showFig:
                 mpl.use('agg')
