@@ -91,7 +91,7 @@ def concat_tables_and_loc(dTable,dataInicial,dataFinal,Exps,Var,series):
             fname_exp_datai = 'ACOR' + str(exp) + '_' + datai_fmt + datai_fmt + 'T.scan'
             fname_exp_dataf = 'ACOR' + str(exp) + '_' + dataf_fmt + dataf_fmt + 'T.scan'
             
-            varlev_dia_exp = cTable.sort_index(0).loc[fname_exp_datai:fname_exp_dataf, str(Var)]
+            varlev_dia_exp = cTable.sort_index(axis=0).loc[fname_exp_datai:fname_exp_dataf, str(Var)]
             
             varlev_exps.append(varlev_dia_exp)
         
