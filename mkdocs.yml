@@ -14,6 +14,7 @@ nav:
     - 'Instalação': instalacao.md
     - 'Introdução': introducao.md
   - 'Uso':
+    - 'Correcoes de confiabilidade': correcoes-confiabilidade.md
     - 'Leitura dos namelists do SCANTEC': Tutorial_SCANPLOT-leitura_namelists.md
     - 'Função get_dataframe': Tutorial_SCANPLOT-get_dataframe.md
     - 'Explorando os dataframes': Tutorial_SCANPLOT-explorando_dataframes.md

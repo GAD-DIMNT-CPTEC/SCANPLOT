@@ -1,7 +1,7 @@
 # SCANPLOT - Um sistema de plotagem simples para o SCANTEC
 # CC-BY-NC-SA-4.0 2022 INPE
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -14,13 +14,18 @@ setup(
     author_email="cfbastarz@gmail.com",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/cfbastarz/SCANPLOT",
-    packages=find_packages(include=['.']),
-    install_requires=['numpy','matplotlib','xarray','pandas','seaborn','SkillMetrics','scipy'],
+    url="https://github.com/GAD-DIMNT-CPTEC/SCANPLOT",
+    py_modules=['scanplot', 'core_scanplot', 'data_structures', 'aux_functions',
+                'global_variables', 'plot_functions', 'gui_functions'],
+    install_requires=['numpy', 'matplotlib', 'pandas', 'seaborn', 'SkillMetrics', 'scipy'],
+    extras_require={
+        'fields': ['xarray', 'cartopy'],
+        'gui': ['xarray', 'cartopy', 'panel>=1.5,<2', 'param', 'holoviews', 'hvplot', 'geoviews'],
+        'test': ['pytest', 'build'],
+    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: POSIX :: Linux",
     ],
     python_requires='>=3.8.2',
