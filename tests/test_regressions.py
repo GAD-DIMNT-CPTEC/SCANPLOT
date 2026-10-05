@@ -242,6 +242,32 @@ def test_tstudent_plot_real_leads(tmp_path):
     assert not plt.get_fignums()
 
 
+def test_confidence_panels_center_intervals_on_means(tmp_path):
+    curves = [pd.Series([.8,.7], index=[24,72])] * 3
+    means = [pd.Series([.1,.2], index=[24,72]), pd.Series([-.2,-.3], index=[24,72])]
+    upper = [pd.Series([.04,.03], index=[72,24])] * 2
+    lower = [-value for value in upper]
+    originals = [value.copy() for value in means + upper + lower]
+    figures = sc.plot_lines_tStudent(datetime(2020,1,1), datetime(2020,1,3), {},
+        ['A','B','C'], 'x', 'X', means, upper, lower, curves, tmp_path)
+    axes = figures[0].axes
+    assert len(axes) == 3
+    for ax, mean in zip(axes[1:], means):
+        vertices = ax.collections[0].get_paths()[0].vertices
+        assert vertices[:,1].min() == pytest.approx((mean + lower[0]).min())
+        assert vertices[:,1].max() == pytest.approx((mean + upper[0]).max())
+        assert ax.get_ylim()[0] < vertices[:,1].min()
+        assert ax.get_ylim()[1] > vertices[:,1].max()
+        np.testing.assert_array_equal(ax.lines[0].get_ydata(), mean)
+        np.testing.assert_array_equal(ax.lines[1].get_ydata(), [0,0])
+    assert axes[1].get_title() == 'A - B'
+    assert axes[2].get_title() == 'A - C'
+    assert axes[1].get_ylim() == axes[2].get_ylim()
+    for actual, original in zip(means + upper + lower, originals):
+        pd.testing.assert_series_equal(actual, original)
+    assert not plt.get_fignums()
+
+
 def test_backward_and_grid_spacing(tmp_path):
     pytest.importorskip('xarray')
     binary(tmp_path)

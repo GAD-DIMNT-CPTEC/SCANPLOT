@@ -63,8 +63,11 @@ Com n pares, o intervalo bilateral de 95% e
 `media(d) +/- t(0.975, n-1) * std(d, ddof=1) / sqrt(n)`.
 Menos de dois pares produz NaN. Uma diferenca constante com dois ou mais
 pares tem largura zero. A API retorna media, meia-largura positiva e negativa;
-o grafico mostra esses limites em torno de zero. Uma curva fora da faixa
-equivale a um intervalo da media que exclui zero.
+o grafico soma essas meias-larguras a diferenca media para mostrar o intervalo
+de confianca em torno da curva. Cada comparacao tem seu proprio painel,
+com a mesma escala vertical entre paineis de diferencas. Quando o intervalo
+nao cruza zero, a diferenca e significativa a 5% naquele prazo. Diferencas
+negativas indicam maior ACOR do experimento comparado que a referencia.
 
 Esse teste assume diferencas aproximadamente normais (ou amostra adequada
 para aproximacao) e independentes entre datas. Nao corrige autocorrelacao,

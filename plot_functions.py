@@ -100,29 +100,44 @@ def plot_lines(dTable, Vars, Stats, outDir, **kwargs):
 
 def plot_lines_tStudent(dataInicial, dataFinal, dTable_series, Exps, Var, VarName,
                        ldrom_exp, ldrosup_exp, ldroinf_exp, varlev_exps, outDir, **kwargs):
-    """Plot ACOR and paired mean differences with 95% t half-widths."""
-    if len(Exps) != len(varlev_exps) or any(
+    """Plot ACOR and one mean-centered 95% confidence interval per comparison.
+
+    Inputs retain the signed half-width convention of calc_tStudent. Each
+    displayed interval is [mean + lower, mean + upper]; excluding zero
+    corresponds to significance at 5% for that comparison and forecast hour.
+    """
+    if len(Exps) < 2 or len(Exps) != len(varlev_exps) or any(
         len(values) != len(Exps) - 1 for values in (ldrom_exp, ldrosup_exp, ldroinf_exp)
     ):
         raise ValueError("Experimentos, curvas e intervalos devem corresponder.")
     directory, show, save = _options(outDir, kwargs)
     colors = kwargs.get("lineStyles") or plt.rcParams["axes.prop_cycle"].by_key()["color"]
-    fig, axes = plt.subplots(2, 1, sharex=True, figsize=(8, 7))
+    fig, axes = plt.subplots(len(Exps), 1, sharex=True,
+                             figsize=(9, 3 + 2.2 * (len(Exps) - 1)),
+                             gridspec_kw={"height_ratios": [1.3] + [1] * (len(Exps) - 1)})
     for i, series in enumerate(varlev_exps):
         axes[0].plot(series.index, series, label=Exps[i], color=colors[i % len(colors)])
     for i, (mean, upper, lower) in enumerate(zip(ldrom_exp, ldrosup_exp, ldroinf_exp), 1):
         color = colors[i % len(colors)]
-        axes[1].plot(mean.index, mean, color=color, label=f"{Exps[0]} - {Exps[i]}")
-        axes[1].fill_between(mean.index, lower.reindex(mean.index),
-                             upper.reindex(mean.index), color=color, alpha=0.15)
+        ax = axes[i]
+        if i > 1:
+            ax.sharey(axes[1])
+        mean = mean.sort_index()
+        low = mean + lower.reindex(mean.index)
+        high = mean + upper.reindex(mean.index)
+        valid = np.isfinite(mean) & np.isfinite(low) & np.isfinite(high)
+        ax.plot(mean.index, mean, color=color, marker="o", markersize=3,
+                label="Diferenca media")
+        ax.fill_between(mean.index, low, high, where=valid, color=color,
+                         alpha=0.22, label="IC 95%")
+        ax.axhline(0, color="black", linestyle="--", linewidth=1)
+        ax.set(title=f"{Exps[0]} - {Exps[i]}", ylabel="Diferenca de ACOR")
     axes[0].set(title=VarName, ylabel="ACOR")
     axes[0].axhline(0.5, color="black", linewidth=0.8)
-    axes[1].set(xlabel="Horas de Integracao", ylabel="Diferenca de ACOR",
-                title="Limites pareados de 95% em torno de zero")
-    axes[1].axhline(0, color="black", linewidth=0.8)
+    axes[-1].set_xlabel("Horas de Integracao")
     for ax in axes:
-        ax.grid(linestyle="--", alpha=0.5)
-        ax.legend()
+        ax.grid(linestyle=":", alpha=0.4)
+        ax.legend(loc="best", fontsize=9)
     name = f"ACOREXPS_{dataInicial:%Y%m%d%H}{dataFinal:%Y%m%d%H}_{Var.replace(':', '')}-tStudent.png"
     _finish(fig, directory, name, show, save)
     return [fig]
