@@ -202,4 +202,3 @@ dependencies:
     - mkdocs-video
     - mkdocs-pdf-export-plugin
     - mkdocs-jupyter
-prefix: /home/carlos/anaconda3/envs/SCANPLOT

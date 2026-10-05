@@ -1,383 +1,184 @@
-#! /usr/bin/env python3
-
 # SCANPLOT - Um sistema de plotagem simples para o SCANTEC
 # CC-BY-NC-SA-4.0 2022 INPE
+"""Readers for SCANTEC tables and sequential Fortran fields."""
 
-import global_variables as gvars
-
+from datetime import datetime, timedelta
+from pathlib import Path
+import pickle
 import re
-import os
-import ntpath
+import warnings
 
 import numpy as np
 import pandas as pd
+from scipy.io import FortranFile, FortranEOFError
 
-from datetime import date, datetime, timedelta
+import global_variables as gvars
 
-import xarray as xr
-import cartopy.crs as ccrs
+_FILENAME = re.compile(
+    r"^(?P<stat>[A-Z]{4})(?P<experiment>.+)_(?P<start>\d{10})"
+    r"(?P<end>\d{10})(?P<kind>[TF])\.(?P<extension>scan|scam)$"
+)
 
-import pickle as pk
 
-from scipy.io import FortranFile
+def table_metadata(name):
+    """Parse identifiers without substring matches or fixed experiment lengths."""
+    match = _FILENAME.fullmatch(Path(name).name)
+    if match is None:
+        raise ValueError(f"Nome SCANTEC invalido: {name}")
+    return match.groupdict()
 
-def get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir,**kwargs):
 
+def _step(value):
+    hours = float(value)
+    if not np.isfinite(hours) or hours <= 0 or not hours.is_integer():
+        raise ValueError("O passo temporal deve ser um numero inteiro positivo de horas.")
+    return int(hours)
+
+
+def _periods(start, end, series, step):
+    if start > end:
+        raise ValueError("A data inicial deve ser anterior ou igual a data final.")
+    if not series:
+        yield start, end
+    else:
+        while start <= end:
+            yield start, start
+            start += timedelta(hours=step)
+
+
+def _missing(paths, policy):
+    if policy not in ("warn", "raise", "ignore"):
+        raise ValueError("missing deve ser 'warn', 'raise' ou 'ignore'.")
+    if paths:
+        message = f"{len(paths)} arquivo(s) SCANTEC ausente(s). Primeiro: {paths[0]}"
+        if policy == "raise":
+            raise FileNotFoundError(message)
+        if policy == "warn":
+            warnings.warn(message, UserWarning, stacklevel=3)
+
+
+def get_dataframe(dataInicial, dataFinal, Stats, Exps, outDir, **kwargs):
+    """Read tables indexed by forecast hour.
+
+    series=True reads initialization cycles with analysis_step hours (default 24).
+    Missing files are reported by default; missing='raise' enforces completeness.
+    Undefined values (-999.9 by default) are converted to NaN.
     """
-    get_dataframe
-    =============
-    
-    Esta função transforma a(s) tabela(s) do SCANTEC em dataframe(s).
-    
-    Parâmetros de entrada
-    ---------------------
-        dataInicial : objeto datetime com a data inicial do experimento;
-        dataFinal   : objeto datetime com a data final do experimento;
-        Stats       : lista com os nomes das estatísticas a serem processadas;
-        Exps        : lista com os nomes dos experimentos;
-        outDir      : string com o diretório com as tabelas do SCANTEC.
-
-    Parâmetros de entrada opcionais
-    -------------------------------
-        series : valor Booleano para ler uma série temporal das tabelas do SCANTEC:
-                 * series=False (valor padrão), lê as tabelas do SCANTEC geradas para a avaliação de um período;
-                 * series=True, lê as tabelas do SCANTEC geradas para a avaliação dos dias dentro de um período;
-        tExt   : string com o extensão dos nomes das tabelas do SCANTEC:
-                 * tExt='scan' (valor padrão), considera as tabelas do SCANTEC;
-                 * tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC.
-        save   : valor Booleano para salvar o dicionário de dataframes em disco:
-                 * save=False (valor padrão), não salva o dicionário de dataframes em disco;
-                 * save=True, utiliza o pickle para salvar o dicionário de dataframes em disco (cria um arquivo binário).
-    
-    Resultado
-    ---------
-        Dicionário com o(s) dataframe(s) com a(s) tabela(s) do SCANTEC.
-    
-    Uso
-    ---
-        import scanplot 
-        
-        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
-        
-        dataInicial = data_conf["Starting Time"]
-        dataFinal = data_conf["Ending Time"]
-        Stats =  ["ACOR", "RMSE", "VIES"]
-        Exps = list(data_conf["Experiments"].keys())
-        outDir = data_conf["Output directory"]
-        
-        dTable = scanplot.get_dataframe(dataInicial,dataFinal,Stats,Exps,outDir)
-    """
-
-    # Verifica se foram passados os argumentos opcionais e atribui os valores
-
-    global tExt
-
-    if 'series' in kwargs:
-        series = kwargs['series']
-    else:
-        series = gvars.series
-
-    if 'tExt' in kwargs:
-        tExt = kwargs['tExt']
-        # Atualiza o valor global de tExt
-        gvars.tExt = tExt
-    else:
-        tExt = gvars.tExt
-
-    if 'save' in kwargs:
-        save = kwargs['save']
-    else:
-        save = gvars.save
-
-    # Dicionário com o(s) dataframe(s)
-    ds_table = {}       
-    
-    if series:
-    
-        while (dataInicial <= dataFinal):
-            
-            dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
-            dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
-            
-            for stat in Stats:
-    
-                for exp in Exps:
-            
-                    table_name = stat + exp + '_' + dataInicial_fmt + dataInicial_fmt + 'T.' + tExt
-                    table = os.path.join(outDir, table_name) 
-
-                    lista_n = []
-    
-                    if os.path.exists(table):
-                        df_n = pd.read_csv(table, sep="\s+")
-    
-                        ds_table[ntpath.basename(str(table))] = df_n    
-                        
-            dataInicial = dataInicial + timedelta(hours=24) # pegar esta informação do namelist (timedelta)   
-
-        # No final do loop temporal, salva o dicionário em disco
-        if save:
-            pk.dump(ds_table, open(os.path.join(outDir, 'scantec_ds_table-series.pkl'), 'wb'))
-
-    else:
-        
+    series = kwargs.get("series", gvars.series)
+    extension = kwargs.get("tExt", gvars.tExt)
+    step = _step(kwargs.get("analysis_step", 24))
+    policy = kwargs.get("missing", "warn")
+    _missing([], policy)
+    result, absent = {}, []
+    root = Path(outDir).expanduser()
+    for start, end in _periods(dataInicial, dataFinal, series, step):
         for stat in Stats:
-                   
-            dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
-            dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
-    
-            for exp in Exps:
-            
-                table_name = stat + exp + '_' + dataInicial_fmt + dataFinal_fmt + 'T.' + tExt 
-                table = os.path.join(outDir, table_name) 
+            for experiment in Exps:
+                name = f"{stat}{experiment}_{start:%Y%m%d%H}{end:%Y%m%d%H}T.{extension}"
+                path = root / name
+                if not path.is_file():
+                    absent.append(path)
+                    continue
+                frame = pd.read_csv(path, sep=r"\s+", na_values=[kwargs.get("undef", -999.9)])
+                if "%Previsao" not in frame:
+                    raise ValueError(f"Coluna %Previsao ausente: {path}")
+                frame = frame.apply(pd.to_numeric, errors="raise")
+                lead = frame["%Previsao"]
+                if lead.isna().any() or lead.duplicated().any() or (lead < 0).any():
+                    raise ValueError(f"Prazos invalidos ou duplicados: {path}")
+                frame = frame.sort_values("%Previsao")
+                frame.index = pd.Index(frame["%Previsao"], name="forecast_hour")
+                result[name] = frame
+    _missing(absent, policy)
+    if kwargs.get("save", gvars.save):
+        suffix = "-series" if series else ""
+        with (root / f"scantec_ds_table{suffix}.pkl").open("wb") as handle:
+            pickle.dump(result, handle)
+    return result
 
-                lista_n = []
-    
-                if os.path.exists(table):
-                    df_n = pd.read_csv(table, sep="\s+")
-    
-                    ds_table[ntpath.basename(str(table))] = df_n    
-        
-        # No final do loop temporal, salva o dicionário em disco
-        if save:
-            pk.dump(ds_table, open(os.path.join(outDir, 'scantec_ds_table.pkl'), 'wb'))
 
-    return ds_table
+def get_dataset(data_conf, data_vars, Stats, Exps, outDir, **kwargs):
+    """Read sequential float32 Fortran fields, one record per variable/lead.
 
-def get_dataset(data_conf,data_vars,Stats,Exps,outDir,**kwargs):
-       
+    time is initialization + forecast_hour for forward evaluations, or
+    verification - forecast_hour for backward evaluations. forecast_hour is
+    always nonnegative; the evaluation period is retained in attributes.
+    The supplied outDir takes precedence over the configuration.
     """
-    get_dataset
-    ===========
-    
-    Esta função transforma o(s) campo(s) com a distribuição espacial da(s) 
-    estatística(s) do SCANTEC em dataset(s).
-    
-    Parâmetros de entrada
-    ---------------------
-        data_conf : dicionário com as configurações do SCANTEC;
-        data_vars : dicionário com as variáveis avaliadas pelo SCANTEC;
-        Stats     : lista com os nomes das estatísticas a serem processadas;
-        Exps      : lista com os nomes dos experimentos.
-        outDir    : string com o diretório com as tabelas do SCANTEC.
-    
-    Parâmetros de entrada opcionais
-    -------------------------------
-        series : valor Booleano para ler uma série temporal das tabelas do SCANTEC:
-                 * series=False (valor padrão), lê as tabelas do SCANTEC geradas para a avaliação de um período;
-                 * series=True, lê as tabelas do SCANTEC geradas para a avaliação dos dias dentro de um período;
-        tExt   : string com o extensão dos nomes das tabelas do SCANTEC:
-                 * tExt='scan' (valor padrão), considera as tabelas do SCANTEC;
-                 * tExt='scam', considera os nomes das tabelas das versões antigas do SCANTEC.
-        save   : valor Booleano para salvar o dicionário de dataframes em disco:
-                 * save=False (valor padrão), não salva o dicionário de dataframes em disco;
-                 * save=True, utiliza o pickle para salvar o dicionário de dataframes em disco (cria um arquivo binário).
-    
-    Resultado
-    ---------
-        Dicionário com o(s) dataset(s) com a(s) distribuição(ões) espacial(is)
-        da(s) estatística(s) do SCANTEC.
-    
-    Uso
-    ---
-        import scanplot 
-        
-        data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
-        
-        Stats =  ["ACOR", "RMSE", "VIES"]
-        Exps = list(data_conf["Experiments"].keys())
-        outDir = data_conf["Output directory"]
-        
-        dSet = scanplot.get_dataset(data_conf,data_vars,Stats,Exps,outDir)
-    """
+    import xarray as xr
 
-    # Verifica se foram passados os argumentos opcionais e atribui os valores
+    series = kwargs.get("series", gvars.series)
+    extension = kwargs.get("tExt", gvars.tExt)
+    step = _step(data_conf["Forecast Time Step"])
+    analysis_step = _step(kwargs.get("analysis_step", data_conf["Analisys Time Step"]))
+    total = int(data_conf["Forecast Total Time"])
+    if total < 0 or total % step:
+        raise ValueError("Forecast Total Time deve ser multiplo do passo de previsao.")
+    leads = np.arange(0, total + 1, step)
+    direction = data_conf.get("Time Step Type", "forward").strip().lower()
+    if direction not in ("forward", "backward"):
+        raise ValueError("Time Step Type deve ser forward ou backward.")
+    sign = 1 if direction == "forward" else -1
 
-    global tExt
+    def axis(lower, upper, resolution):
+        lo, hi, delta = (float(data_conf[key]) for key in (lower, upper, resolution))
+        if delta <= 0 or hi < lo:
+            raise ValueError("Limites ou resolucao espacial invalidos.")
+        # Some legacy domains end between grid points; preserve the grid spacing.
+        count = int(np.floor((hi - lo) / delta + 1e-6)) + 1
+        return lo + np.arange(count) * delta
 
-    if 'series' in kwargs:
-        series = kwargs['series']
-    else:
-        series = gvars.series
-
-    if 'tExt' in kwargs:
-        tExt = kwargs['tExt']
-        # Atualiza o valor global de tExt
-        gvars.tExt = tExt
-    else:
-        tExt = gvars.tExt
-
-    if 'save' in kwargs:
-        save = kwargs['save']
-    else:
-        save = gvars.save
-
-    dataInicial = data_conf['Starting Time']
-    dataFinal = data_conf['Ending Time']
-    t_step = str(data_conf['Forecast Time Step']) + 'H'
-    dataInicial_fmt = dataInicial.strftime('%Y%m%d%H')
-    dataFinal_fmt = dataFinal.strftime('%Y%m%d%H')
-
-    ftime = np.int(data_conf['Forecast Total Time'])
-    atime = np.int(data_conf['Analisys Time Step'])
-    tdef = np.int((ftime / atime) + 1) # verificar, pois no arquivo CTL esta é a conta que é feita, mas no arquivo binário não!
-    dataFinal2 = dataInicial + timedelta(hours=np.int(tdef)*np.int(data_conf['Forecast Time Step']))
-
-    times = pd.date_range(dataInicial, dataFinal, freq=t_step)  
-#    tdef = len([*times])                     
-#    tdef = 8 # o tempo no arquivo CTL é referente à quantidade de linhas das tabelas (ie., tempos de previsão avaliados)
- 
-#    print('Starting Time',dataInicial)
-#    print('Ending Time',dataFinal)
-#    print(t_step)
-#    print(times)
-#    print(len(times))
-#    print(tdef)
-#    print(np.arange(tdef))
-    
-    # Tamanho e limites do domínio                           
-    lllat = np.float32(data_conf['run domain lower left lat'])
-    lllon = np.float32(data_conf['run domain lower left lon'])
-    urlat = np.float32(data_conf['run domain upper right lat'])
-    urlon = np.float32(data_conf['run domain upper right lon'])
- 
-    gdx = np.float32(data_conf['run domain resolution dx'])
-    gdy = np.float32(data_conf['run domain resolution dy'])
-                               
-    xdef = np.int(((urlon - lllon) / gdx) + 1)
-    ydef = np.int(((urlat - lllat) / gdy) + 1)
-
-    # Latitudes e longitudes                           
-    lats = np.linspace(lllat, urlat, num=ydef)
-    lons = np.linspace(lllon, urlon, num=xdef)                      
-#    lats = np.arange(lllat, urlat, gdy)
-#    lons = np.arange(lllon, urlon, gdx) # fica com tamanho menor (-1 ponto)
-
-    outDir = data_conf['Output directory']
-    
-    # Variáveis                           
-    fnames = []
-
-    for i in [*data_vars.values()]:
-        fnames.append(i[0])                           
- 
-    nvars = len(fnames)
-    
-    #print(nvars,fnames)
-    
-    # Dicionário com o(s) dataset(s)
-    ds_field = {}
-    
-    if series:
-    
-        while (dataInicial <= dataFinal):
-            
-            dataInicial_fmt = dataInicial.strftime("%Y%m%d%H")
-            dataFinal_fmt = dataFinal.strftime("%Y%m%d%H")
-            
-            for stat in Stats:
-                       
-                for exp in Exps:
-                
-                    file_name = str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataInicial_fmt) + 'F.' + tExt
-                    fname = os.path.join(outDir, file_name)
-        
-                    lista_n = []
-        
-                    try:                              
-        
-                        dsl = []
-                        ds = xr.Dataset()                           
-        
-                        with open(fname,'rb') as f:
-                                              
-                            for t in np.arange(tdef): 
-                                               
-                                for i in np.arange(nvars):
-        
-                                    # Leitura utilizando o SciPy
-                                    data = FortranFile(f, 'r')
-                                    field = data.read_record('f4').reshape(xdef, ydef, order='F') 
-        
-                                    field[field == -999.9] = np.nan # substitui o valor -999.9 por NaN
-        
-                                    #print('time=',t,'stat=',stat,'exp=',exp,'var=',i)
-                                    
-                                    ds[fnames[i]] = (('lon','lat'), field)
-                                    ds.coords['lat'] = ('lat', lats)
-                                    ds.coords['lon'] = ('lon', lons)
-                                    ds.coords['time'] = [times[t]]
-                                               
-                                    dst = ds.transpose('time', 'lat', 'lon')
-                                               
-                                dsl.append(dst)
-                        
-                            dsc = xr.concat(dsl, dim='time')                
-                        
-                        ds_field[ntpath.basename(str(fname))] = xr.concat(dsl, dim='time')
-                        
-                    except IOError:
-        
-                        print("Arquivo " + fname + " não existe!")
-                        
-            dataInicial = dataInicial + timedelta(hours=24) # pegar esta informação do namelist (timedelta)   
-
-        # No final do loop temporal, salva o dicionário em disco
-        if save:
-            pk.dump(ds_field, open(os.path.join(outDir, 'scantec_ds_field-series.pkl'), 'wb'))
-
-    else:
-        
+    lats = axis("run domain lower left lat", "run domain upper right lat",
+                "run domain resolution dy")
+    lons = axis("run domain lower left lon", "run domain upper right lon",
+                "run domain resolution dx")
+    variables = [value[0] for value in data_vars.values()]
+    if not variables or len(set(variables)) != len(variables):
+        raise ValueError("A lista de variaveis deve ser nao vazia e sem duplicatas.")
+    root = Path(outDir).expanduser()
+    start, end = data_conf["Starting Time"], data_conf["Ending Time"]
+    policy = kwargs.get("missing", "warn")
+    _missing([], policy)
+    result, absent = {}, []
+    for initial, final in _periods(start, end, series, analysis_step):
         for stat in Stats:
-                   
-            dataInicial_fmt = dataInicial.strftime('%Y%m%d%H')
-            dataFinal_fmt = dataFinal.strftime('%Y%m%d%H')
-    
-            for exp in Exps:
-            
-                file_name = str(stat) + str(exp) + '_' + str(dataInicial_fmt) + str(dataFinal_fmt) + 'F.' + tExt
-                fname = os.path.join(outDir, file_name)
-    
-                lista_n = []
-    
-                try:                              
-    
-                    dsl = []
-                    ds = xr.Dataset()                           
-    
-                    with open(fname,'rb') as f:
-                                          
-                        for t in np.arange(tdef): 
-                                           
-                            for i in np.arange(nvars):
-    
-                                # Leitura utilizando o SciPy
-                                data = FortranFile(f, 'r')
-                                field = data.read_record('f4').reshape(xdef, ydef, order='F') 
-    
-                                field[field == -999.9] = np.nan # substitui o valor -999.9 por NaN
-    
-                                #print('time=',t,'stat=',stat,'exp=',exp,'var=',i)
-                                
-                                ds[fnames[i]] = (('lon','lat'), field)
-                                ds.coords['lat'] = ('lat', lats)
-                                ds.coords['lon'] = ('lon', lons)
-                                ds.coords['time'] = [times[t]]
-                                           
-                                dst = ds.transpose('time', 'lat', 'lon')
-                                           
-                            dsl.append(dst)
-                    
-                        dsc = xr.concat(dsl, dim='time')                
-                    
-                    ds_field[ntpath.basename(str(fname))] = xr.concat(dsl, dim='time')
-                    
-                except IOError:
-    
-                    print("Arquivo " + fname + " não existe!")
-
-        # No final do loop temporal, salva o dicionário em disco
-        if save:
-            pk.dump(ds_field, open(os.path.join(outDir, 'scantec_ds_field.pkl'), 'wb'))
-
-    return ds_field
+            for experiment in Exps:
+                name = f"{stat}{experiment}_{initial:%Y%m%d%H}{final:%Y%m%d%H}F.{extension}"
+                path = root / name
+                if not path.is_file():
+                    absent.append(path)
+                    continue
+                values = {v: [] for v in variables}
+                try:
+                    with FortranFile(path, "r") as handle:
+                        for lead in leads:
+                            for variable in variables:
+                                field = handle.read_reals(np.float32)
+                                if field.size != len(lats) * len(lons):
+                                    raise ValueError(f"Dimensoes incompativeis: {path}")
+                                field = field.reshape((len(lats), len(lons)))
+                                field[field == np.float32(kwargs.get("undef", -999.9))] = np.nan
+                                values[variable].append(field)
+                        try:
+                            handle.read_reals(np.float32)
+                        except FortranEOFError:
+                            pass
+                        else:
+                            raise ValueError(f"Registros excedentes: {path}")
+                except (OSError, ValueError) as exc:
+                    raise ValueError(f"Arquivo de campos invalido ou incompleto: {path}: {exc}") from exc
+                times = [initial + timedelta(hours=sign * int(lead)) for lead in leads]
+                result[name] = xr.Dataset(
+                    {v: (("time", "lat", "lon"), np.stack(values[v])) for v in variables},
+                    coords={"time": times, "forecast_hour": ("time", leads),
+                            "lat": lats, "lon": lons},
+                    attrs={"period_start": initial.isoformat(), "period_end": final.isoformat(),
+                           "experiment": experiment, "statistic": stat,
+                           "time_step_type": direction},
+                )
+    _missing(absent, policy)
+    if kwargs.get("save", gvars.save):
+        suffix = "-series" if series else ""
+        with (root / f"scantec_ds_field{suffix}.pkl").open("wb") as handle:
+            pickle.dump(result, handle)
+    return result

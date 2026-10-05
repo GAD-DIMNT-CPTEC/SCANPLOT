@@ -1,34 +1,14 @@
-#! /usr/bin/env python3
-
-# Uso:
-# $ conda activate SCANPLOT-teste2
-# $ python test_cmd-get_dataframe.py
-
-# Importa o SCANPLOT (sc é um alias)
+#!/usr/bin/env python3
 import scanplot as sc
+from example_config import load
 
-#cdir = '/lustre_xc50/carlos_bastarz/SCANPLOT/SCANPLOT_T11212'
-cdir = '/home/carlos/Downloads/SCANPLOT_T11212'
+variables, config, output, figures = load()
+start, end = config["Starting Time"], config["Ending Time"]
+experiments = list(config["Experiments"])
+stats = ["ACOR", "RMSE", "VIES"]
+selected = list(variables.values())[:3]
 
-# Constrói os dicionários data_vars e data_conf
-data_vars, data_conf = sc.read_namelists(cdir + '/test/SCANTEC.TESTS')
-
-# Considera as configurações do SCANTEC para o período (JJA/2020)
-dataInicial = data_conf['Starting Time']
-dataFinal = data_conf['Ending Time']
-Vars = list(map(data_vars.get,[11,12,13])) # ou [*map(data_vars.get,[12,14])]
-Stats = ['ACOR', 'RMSE', 'VIES']
-Exps = list(data_conf['Experiments'].keys()) # ou [*data_conf["Experiments"].keys()]
-#outDir = data_conf['Output directory']
-
-# Atualiza os caminhos com os resultados do SCANTEC e onde as figuras serão armazenadas
-outDir = cdir + '/test/SCANTEC.TESTS/dataout'
-figDir = outDir + '/figs'
-
-# Constrói o dicionário dTable com as tabelas das estatísticas para o período JJA/2020
-dTable = sc.get_dataframe(dataInicial, dataFinal, Stats,
-                          Exps, outDir, series=False, save=True)
-
-# Constrói o dicionário dTable_series com as tabelas das estatísticas para os intervalos do período JJA/2020
-dTable_series = sc.get_dataframe(dataInicial, dataFinal, Stats,
-                                 Exps, outDir, series=True, save=True)
+data = sc.get_dataframe(start, end, stats, experiments, output, save=True, missing="raise")
+daily = sc.get_dataframe(start, end, stats, experiments, output, series=True,
+                         analysis_step=config["Analisys Time Step"], save=True)
+print(f"{len(data)} tabelas de periodo; {len(daily)} tabelas por inicializacao.")

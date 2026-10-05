@@ -52,6 +52,8 @@ def read_namelists(basepath,**kwargs):
         data_vars, data_conf = scanplot.read_namelists("~/SCANTEC")
     """
     
+    basepath = os.path.expanduser(os.fspath(basepath))
+
     # Verifica se foram passados os argumentos opcionais e atribui os valores
     if 'returnpath' in kwargs:
         returnpath = kwargs['returnpath']
@@ -85,11 +87,13 @@ def read_namelists(basepath,**kwargs):
     
     # Com o método "with open", o arquivo é fechado automaticamente ao final
     with open(filename_vars,'r') as scantec_vars:
-      for idx, line in enumerate(scantec_vars.readlines(), start=-4):
-        rline = line.lstrip()
-        if not (rline.startswith('#') or rline.startswith('::') or rline.startswith('variables:')):
-          varlevdesc = rline.strip().split(' ', 1)
-          VarsLevs[idx] = (varlevdesc[0], varlevdesc[1].strip('\"'))
+      for line in scantec_vars:
+        rline = line.strip()
+        if rline and not rline.startswith(('#', '::', 'variables:')):
+          varlevdesc = rline.split(None, 1)
+          if len(varlevdesc) != 2:
+            raise ValueError('Definicao de variavel invalida: ' + rline)
+          VarsLevs[len(VarsLevs)] = (varlevdesc[0], varlevdesc[1].strip('\"'))
         
 #    # Lê do arquivo scantec.conf e transforma as informações principais em um dicionário
 #    filename = os.path.join(basepath, 'bin/scantec.conf') 
@@ -114,6 +118,10 @@ def read_namelists(basepath,**kwargs):
       #for i in range(2, len(lexps)): # 2: desconsidera as linhas "Experiments:" e "#ModelId Name Diretory File_Name_with_mask"
       for i in range(1, len(lexps)): # 2: desconsidera as linhas "Experiments:" e "#ModelId Name Diretory File_Name_with_mask"
         slexps = lexps[i].split()
+        if not slexps or slexps[0].startswith('#'):
+          continue
+        if len(slexps) < 3:
+          raise ValueError('Definicao de experimento invalida: ' + lexps[i])
         Exps[slexps[1]] = [slexps[0], slexps[2]]
         Confs['Experiments'] = Exps
       return Confs

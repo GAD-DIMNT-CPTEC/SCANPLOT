@@ -1,0 +1,28 @@
+name: Tests
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install '.[test,gui]'
+      - run: python -m pytest -q
+        env:
+          MPLBACKEND: Agg
+      - run: python -m build --wheel
+      - run: python -m pip install --force-reinstall --no-deps dist/*.whl
+      - name: Import installed wheel outside checkout
+        working-directory: ${{ runner.temp }}
+        run: python -c "import scanplot; print(scanplot.__file__); assert callable(scanplot.get_dataframe)"
+        env:
+          MPLBACKEND: Agg
